@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">Paranoya</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="nav_keys">Keys</string>
+    <string name="nav_tools">Tools</string>
+    <string name="nav_contact_title">Contacts</string>
+    <string name="nav_contact_search">Search</string>
+    <string name="nav_contact_list">list</string>
+    <string name="item_label_created">Created : </string>
+    <string name="item_label_modify">Modify : </string>
+    <string name="item_label_info">Info :</string>
+    <string name="no_result_key">No keys has been added.</string>
+    <string name="invalid_key_set">Invalid key set.</string>
+    <string name="key_type_label">Type</string>
+    <string name="key_lenght_label">Length</string>
+    <string name="key_secret_label">Secret</string>
+    <string name="no_result_contact">No contact found</string>
+    <string name="user_identity_medium">Medium</string>
+    <string name="user_identity_small">Small</string>
+    <string name="user_identity_large">Large</string>
+    <string name="user_pseudo_label">Pseudo</string>
+    <string name="user_message_label">Status message</string>
+    <string name="key_length_label">Length of the identity key</string>
+    <string name="user_avatar">Avatar</string>
+    <string name="generate_user">Generate identity</string>
+    <string name="nav_user">Identity</string>
+</resources>

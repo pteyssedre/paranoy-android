@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:padding="@dimen/min_padding">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/min_padding">
+
+        <ImageView
+            android:id="@+id/user_avatar"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="@dimen/min_margin"
+            android:contentDescription="@string/user_avatar"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_action_account_circle" />
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/user_pseudo_wrapper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_toEndOf="@+id/user_avatar">
+
+            <EditText
+                android:id="@+id/user_pseudo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/user_pseudo_label"
+                android:inputType="text" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/user_pseudo_wrapper"
+            android:layout_alignStart="@+id/user_pseudo_wrapper"
+            android:layout_below="@+id/user_pseudo_wrapper">
+
+            <EditText
+                android:id="@+id/user_message"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/user_message_label" />
+
+        </android.support.design.widget.TextInputLayout>
+
+    </RelativeLayout>
+
+    <ca.teyssedre.paranoya.views.PrimaryButton
+        android:id="@+id/generate_user"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/min_margin"
+        android:text="@string/generate_user" />
+
+</LinearLayout>

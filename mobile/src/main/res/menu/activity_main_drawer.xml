@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_manage"
+            android:icon="@drawable/ic_account_circle"
+            android:title="@string/nav_user" />
+        <item
+            android:id="@+id/nav_keys"
+            android:icon="@android:drawable/ic_lock_idle_lock"
+            android:title="@string/nav_keys" />
+    </group>
+
+    <item android:title="@string/nav_contact_title">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/nav_search"
+                    android:icon="@android:drawable/ic_search_category_default"
+                    android:title="@string/nav_contact_search" />
+                <item
+                    android:id="@+id/nav_contacts"
+                    android:icon="@android:drawable/ic_menu_send"
+                    android:title="@string/nav_contact_list" />
+            </group>
+        </menu>
+    </item>
+</menu>
