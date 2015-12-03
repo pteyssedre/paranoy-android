@@ -75,8 +75,7 @@ public class ParanoyaActivity extends AppCompatActivity
         fab.setVisibility(View.GONE);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
@@ -91,7 +90,6 @@ public class ParanoyaActivity extends AppCompatActivity
         Crypto.getInstance(this);
         ParanoyaUserSource.getInstance(this);
     }
-
 
     //<editor-fold desc="Permissions">
     private void CheckAccess() {
@@ -231,10 +229,8 @@ public class ParanoyaActivity extends AppCompatActivity
     //</editor-fold>
 
     public void OnIdentityCreated() {
-//        fragHelper.PushFragment(CameraFragment.TAG, CameraFragment.class);
         fragHelper.PushParanoyaFragment(ContactFragment.TAG, ContactFragment.class);
         socketManager.Connect();
-
     }
 
     public void LinkFabAction(final View.OnClickListener action) {

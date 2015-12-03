@@ -35,10 +35,14 @@ import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.View;
 
+import java.security.GeneralSecurityException;
+import java.security.PublicKey;
 import java.util.Random;
 
+import ca.teyssedre.crypto.Crypto;
 import ca.teyssedre.crypto.views.UIHelper;
 import ca.teyssedre.paranoya.messaging.SocketMessage;
+import ca.teyssedre.paranoya.messaging.data.KeyMessage;
 import ca.teyssedre.paranoya.messaging.data.User;
 import ca.teyssedre.paranoya.messaging.enums.SocketMessageType;
 import ca.teyssedre.wsservice.WebSocketBinder;
@@ -71,6 +75,7 @@ public class SocketClient implements ISocketListener {
             binder = null;
         }
     };
+    private PublicKey serverKey;
     //endregion
 
     //region Constructor
@@ -144,7 +149,7 @@ public class SocketClient implements ISocketListener {
     //region OnMessage
 
     /**
-     * On every message recieved by the {@link ca.teyssedre.wsservice.WebSocketService} the current
+     * On every message received by the {@link ca.teyssedre.wsservice.WebSocketService} the current
      * listener will be notify through this method.
      *
      * @param message {@link String} message serialized.
@@ -159,10 +164,20 @@ public class SocketClient implements ISocketListener {
                 System.out.println(parsed);
                 break;
             case KeyExchange:
-                //TODO: Prompt Friend Request Dialog
+                SocketMessage<KeyMessage> keyMessage = SocketMessage.parse(message, KeyMessage.class);
+                if (keyMessage.getData().isSystem()) {
+                    try {
+                        serverKey = Crypto.StringToPublicKey(keyMessage.getData().getPublicKey());
+                    } catch (GeneralSecurityException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    //TODO: prompt dialog
+                }
                 break;
             case KeyValidation:
                 //TODO: Prompt
+                SocketMessage.parse(message);
                 break;
             case DataText:
                 break;

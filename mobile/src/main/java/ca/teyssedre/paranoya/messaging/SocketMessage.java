@@ -48,13 +48,35 @@ public class SocketMessage<T> {
         this.data = data;
         this.destination = destination;
     }
+    public SocketMessage(SocketMessageType type, T data, String destination, String signature) {
+        this.type = type;
+        this.data = data;
+        this.destination = destination;
+        this.signature = signature;
+    }
 
-    public SocketMessage(SocketMessageType type, T data, String destination, String origin, int serial) {
+    public SocketMessage(SocketMessageType type, T data, String destination, String origin, String signature, int serial) {
         this.type = type;
         this.data = data;
         this.destination = destination;
         this.origin = origin;
         this.serial = serial;
+        this.signature = signature;
+    }
+
+    public SocketMessage(SocketMessageType type, String destination, String origin, int serial) {
+        this.type = type;
+        this.destination = destination;
+        this.origin = origin;
+        this.serial = serial;
+    }
+
+    public SocketMessage(SocketMessageType type, String destination, String origin, String signature, int serial) {
+        this.type = type;
+        this.destination = destination;
+        this.origin = origin;
+        this.serial = serial;
+        this.signature = signature;
     }
 
     public SocketMessageType getType() {
@@ -106,6 +128,7 @@ public class SocketMessage<T> {
             JSONObject d = new JSONObject(mapper.writeValueAsString(data));
             jsonObject.put("type", type.getValue());
             jsonObject.put("destination", destination);
+            jsonObject.put("signature", signature);
             jsonObject.put("data", d);
             jsonObject.put("origin", origin);
             jsonObject.put("serial", serial);
@@ -131,16 +154,34 @@ public class SocketMessage<T> {
         return SocketMessageType.Unknown;
     }
 
+    public static SocketMessage parse(String raw)
+    {
+        SocketMessage msg = null;
+        try {
+            JSONObject json = new JSONObject(raw);
+            String destination = json.getString("destination");
+            String origin = json.getString("origin");
+            String signature = json.getString("signature");
+            int serial = json.getInt("serial");
+            int typ = json.getInt("type");
+            msg = new SocketMessage(SocketMessageType.parse(typ), destination, origin, signature, serial);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return msg;
+    }
+
     public static <E> SocketMessage<E> parse(String raw, Class<E> type) {
         SocketMessage<E> msg = null;
         try {
             JSONObject json = new JSONObject(raw);
             String destination = json.getString("destination");
             String origin = json.getString("origin");
+            String signature = json.getString("signature");
             int serial = json.getInt("serial");
             int typ = json.getInt("type");
             Object data = json.get("data");
-            msg = new SocketMessage<>(SocketMessageType.parse(typ), type.cast(data), destination, origin, serial);
+            msg = new SocketMessage<>(SocketMessageType.parse(typ), type.cast(data), destination, origin, signature, serial);
         } catch (JSONException e) {
             e.printStackTrace();
         }
