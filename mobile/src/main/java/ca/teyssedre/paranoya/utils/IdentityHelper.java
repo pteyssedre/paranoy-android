@@ -39,14 +39,15 @@ public class IdentityHelper {
     public static final String TAG = "IdentityHelper";
 
     static User currentUser;
-    List<String> Contacts;
+    List<User> Contacts;
 
-    public static User getCurrentUser() {
+    public User getCurrentUser() {
         if (currentUser == null) {
             List<User> usersByType = ParanoyaUserSource.getInstance().getUsersByType(1);
             if (usersByType.size() > 0) {
                 if (usersByType.size() > 1) {
                     Log.e(TAG, "More than one main user type 1");
+                    //TODO: show popup for multi account support
                 } else {
                     currentUser = usersByType.get(0);
                 }
@@ -55,5 +56,12 @@ public class IdentityHelper {
         return currentUser;
     }
 
+
+    public List<User> getMyContacts(){
+        if(currentUser != null){
+            ParanoyaUserSource.getInstance().getContactsList();
+        }
+        return null;
+    }
 
 }

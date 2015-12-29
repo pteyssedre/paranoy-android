@@ -45,7 +45,6 @@ import android.view.View;
 
 import java.util.List;
 
-import ca.teyssedre.crypto.Crypto;
 import ca.teyssedre.paranoya.fragments.ContactFragment;
 import ca.teyssedre.paranoya.fragments.CreateUserFragment;
 import ca.teyssedre.paranoya.fragments.IdentityFragment;
@@ -53,7 +52,6 @@ import ca.teyssedre.paranoya.fragments.KeysFragment;
 import ca.teyssedre.paranoya.messaging.data.User;
 import ca.teyssedre.paranoya.store.sources.ParanoyaUserSource;
 import ca.teyssedre.paranoya.utils.FragmentHelper;
-import ca.teyssedre.paranoya.utils.SocketClient;
 
 public class ParanoyaActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -62,17 +60,17 @@ public class ParanoyaActivity extends AppCompatActivity
     private static final String TAG = "ParanoyaActivity";
     private FloatingActionButton fab;
     private FragmentHelper fragHelper;
-    private SocketClient socketManager;
+    private ParanoyaApplication application;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        application = (ParanoyaApplication) getApplication();
+        setContentView(R.layout.main_activity);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setVisibility(View.GONE);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -83,12 +81,7 @@ public class ParanoyaActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         fragHelper = new FragmentHelper(this);
-        socketManager = new SocketClient(this);
-
         CheckAccess();
-
-        Crypto.getInstance(this);
-        ParanoyaUserSource.getInstance(this);
     }
 
     //<editor-fold desc="Permissions">
@@ -150,9 +143,7 @@ public class ParanoyaActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        if (socketManager != null) {
-            socketManager.boundToService();
-        }
+        application.setCurrentActivity(this);
         List<User> usersByType = ParanoyaUserSource.getInstance().getUsersByType(1);
         if (usersByType != null && usersByType.size() == 0) {
             fragHelper.PushParanoyaFragment(CreateUserFragment.TAG, CreateUserFragment.class);
@@ -164,9 +155,6 @@ public class ParanoyaActivity extends AppCompatActivity
     @Override
     protected void onStop() {
         super.onStop();
-        if (socketManager != null) {
-            socketManager.unboundToService();
-        }
     }
     //</editor-fold>
 
@@ -230,26 +218,18 @@ public class ParanoyaActivity extends AppCompatActivity
 
     public void OnIdentityCreated() {
         fragHelper.PushParanoyaFragment(ContactFragment.TAG, ContactFragment.class);
-        socketManager.Connect();
+        application.Connect();
     }
 
     public void LinkFabAction(final View.OnClickListener action) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                fab.setVisibility(View.VISIBLE);
-                fab.setOnClickListener(action);
-            }
-        });
+        fab.setVisibility(View.VISIBLE);
+        fab.setOnClickListener(action);
+
+        application.socketManager.Connect();
     }
 
     public void HideFab() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                fab.setVisibility(View.GONE);
-            }
-        });
+        fab.setVisibility(View.INVISIBLE);
     }
 
 }

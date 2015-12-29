@@ -56,6 +56,8 @@ public class UIHelper {
         }
         if (instance == null) {
             instance = new UIHelper(context);
+        }else{
+            instance.setContext(context);
         }
         return instance;
     }
@@ -70,7 +72,7 @@ public class UIHelper {
 
     public void showProgressDialog(String text) {
         if (progressDialog == null) {
-            progressDialog = ProgressDialog.show(instance.context, null, text, true, false, instance.onCancelListener);
+            progressDialog = ProgressDialog.show(context, null, text, true, false, onCancelListener);
         }
     }
 
@@ -125,5 +127,9 @@ public class UIHelper {
 
     public TreeView getTreeViewOf(View v) {
         return new TreeView(v);
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
     }
 }

@@ -42,6 +42,7 @@ import ca.teyssedre.crypto.ICryptoCallback;
 import ca.teyssedre.crypto.store.models.KeySet;
 import ca.teyssedre.paranoya.R;
 import ca.teyssedre.paranoya.adapters.KeySetAdapter;
+import ca.teyssedre.paranoya.fragments.dialogs.CreateKeyDialog;
 import ca.teyssedre.paranoya.fragments.dialogs.KeyEditDialog;
 import ca.teyssedre.paranoya.holders.KeySetViewHolder;
 
@@ -52,20 +53,20 @@ public class KeysFragment extends ParanoyaFragment implements OnItemClickHolder<
     private TextView empty;
     private List<KeySet> _keys;
     private KeySetAdapter adapter;
-    
+
 
     public KeysFragment() {
         fabAction = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//            CreateKeyDialog dialog = new CreateKeyDialog();
-//            dialog.show(getActivity().getSupportFragmentManager(), CreateKeyDialog.TAG);
-                Crypto.getInstance(getActivity()).AddRSAKeyAsync(2048, new ICryptoCallback<Boolean>() {
-                    @Override
-                    public void OnComplete(Boolean data) {
-                        FetchKeysFromDB();
-                    }
-                });
+                CreateKeyDialog dialog = new CreateKeyDialog();
+                dialog.show(getActivity().getSupportFragmentManager(), CreateKeyDialog.TAG);
+//                Crypto.getInstance(getActivity()).AddRSAKeyAsync(2048, new ICryptoCallback<Boolean>() {
+//                    @Override
+//                    public void OnComplete(Boolean data) {
+//                        FetchKeysFromDB();
+//                    }
+//                });
             }
         };
     }

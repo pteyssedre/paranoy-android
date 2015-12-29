@@ -36,16 +36,16 @@ import ca.teyssedre.paranoya.fragments.OnItemClickHolder;
 
 public class SingleStringViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener, View.OnDragListener {
 
-
-    private RelativeLayout wrapper;
     private OnItemClickHolder<SingleStringViewHolder> itemClickListener;
     private TextView textView;
     private int index;
 
     public SingleStringViewHolder(View itemView) {
         super(itemView);
+        this.itemView.setOnClickListener(this);
+        this.itemView.setOnLongClickListener(this);
         textView = (TextView) itemView.findViewById(R.id.item_title);
-        wrapper = (RelativeLayout) itemView.findViewById(R.id.ripple_wrapper);
+        RelativeLayout wrapper = (RelativeLayout) itemView.findViewById(R.id.ripple_wrapper);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             wrapper.setBackground(itemView.getContext().getDrawable(R.drawable.ripple));
         }
@@ -97,6 +97,9 @@ public class SingleStringViewHolder extends RecyclerView.ViewHolder implements V
 
     public void setItemClickListener(OnItemClickHolder<SingleStringViewHolder> itemClickListener) {
         this.itemClickListener = itemClickListener;
+        if (this.itemClickListener != null && itemView != null) {
+            itemView.setOnClickListener(this);
+        }
     }
 
     public void setIndex(int index) {

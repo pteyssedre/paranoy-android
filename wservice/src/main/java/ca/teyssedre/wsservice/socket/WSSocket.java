@@ -1,18 +1,18 @@
 /**
  * The MIT License (MIT)
- * <p/>
+ * <p>
  * Copyright (c) 2015 Pierre Teyssedre
- * <p/>
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * <p/>
+ * <p>
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * <p/>
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package ca.teyssedre.wsservice;
+package ca.teyssedre.wsservice.socket;
 
 import com.koushikdutta.async.ByteBufferList;
 import com.koushikdutta.async.DataEmitter;
@@ -47,32 +47,20 @@ public class WSSocket implements AsyncHttpClient.WebSocketConnectCallback,
         WebSocket.StringCallback, DataCallback, CompletedCallback {
 
     public static final String TAG = "WSSocket";
-    public static WSSocket instance;
 
     //region Properties
     private WebSocket websocket;
     private List<String> queueMsg;
     private List<ISocketListener> listeners;
-    private final Object lockQueueMessage;
-    private final Object lockListener;
     private Exception exception;
     private SocketState socketState = SocketState.UNKNOWN;
     //endregion
 
     //region Constructor
-    private WSSocket() {
-        this.lockQueueMessage = new Object();
-        this.lockListener = new Object();
+    public WSSocket() {
         this.queueMsg = new ArrayList<>();
         this.listeners = new ArrayList<>();
         setSocketState(SocketState.INITIALIZE);
-    }
-
-    public static WSSocket getInstance() {
-        if (instance == null) {
-            instance = new WSSocket();
-        }
-        return instance;
     }
     //endregion
 
@@ -164,10 +152,8 @@ public class WSSocket implements AsyncHttpClient.WebSocketConnectCallback,
      * @param listener
      */
     public void AddListener(ISocketListener listener) {
-        synchronized (lockListener) {
-            if (!listeners.contains(listener)) {
-                listeners.add(listener);
-            }
+        if (!listeners.contains(listener)) {
+            listeners.add(listener);
         }
     }
 
@@ -175,13 +161,11 @@ public class WSSocket implements AsyncHttpClient.WebSocketConnectCallback,
      * @param listener
      */
     public void RemoveListener(ISocketListener listener) {
-        synchronized (lockListener) {
-            Iterator<ISocketListener> iterator = listeners.iterator();
-            while (iterator.hasNext()) {
-                ISocketListener list = iterator.next();
-                if (list == listener) {
-                    iterator.remove();
-                }
+        Iterator<ISocketListener> iterator = listeners.iterator();
+        while (iterator.hasNext()) {
+            ISocketListener list = iterator.next();
+            if (list == listener) {
+                iterator.remove();
             }
         }
     }
@@ -189,18 +173,27 @@ public class WSSocket implements AsyncHttpClient.WebSocketConnectCallback,
     //region AsyncHttpClient.WebSocketConnectCallback Implementation
 
     /**
-     * @param ex
-     * @param webSocket
+     * When the connection process is complete, with error or not,
+     * this function is call and the state of the socket is propagated to all listener.
+     *
+     * @param ex        {@link Exception} that could happened during the connect process. It that element is null
+     *                  the connection was successful.
+     * @param webSocket instance of {@link WebSocket}. Will be null if an {@link Exception} {@code ex} is raised.
      */
     @Override
     public void onCompleted(Exception ex, WebSocket webSocket) {
         if (ex != null) {
             setSocketState(SocketState.FAILED);
+            ex.printStackTrace();
             this.exception = ex;
             this.websocket = null;
         } else {
             setSocketState(SocketState.CONNECTED);
             this.websocket = webSocket;
+            this.websocket.setStringCallback(this);
+            this.websocket.setClosedCallback(this);
+            this.websocket.setEndCallback(this);
+            this.websocket.setDataCallback(this);
             ProcessQueueMessage();
         }
     }
@@ -209,7 +202,10 @@ public class WSSocket implements AsyncHttpClient.WebSocketConnectCallback,
     //region CompletedCallback Implementation
 
     /**
-     * @param ex
+     * If the connection was successful, in any case after the shutdown of the socket this method will
+     * be called.
+     *
+     * @param ex {@link Exception} that could have been raised during the process.
      */
     @Override
     public void onCompleted(Exception ex) {
@@ -222,6 +218,8 @@ public class WSSocket implements AsyncHttpClient.WebSocketConnectCallback,
     //region DataCallback Implementation
 
     /**
+     * The WebSocket protocol allow a data transfer (binary) in that case this method will be called.
+     *
      * @param emitter
      * @param bb
      */
@@ -234,7 +232,10 @@ public class WSSocket implements AsyncHttpClient.WebSocketConnectCallback,
     //region WebSocket.StringCallback Implementation
 
     /**
-     * @param message
+     * On every {@link String} data type received from the server, this method will propagate the
+     * actual message to every {@link ISocketListener} instance.
+     *
+     * @param message {@link String} data received from the server.
      */
     @Override
     public void onStringAvailable(String message) {
@@ -247,14 +248,10 @@ public class WSSocket implements AsyncHttpClient.WebSocketConnectCallback,
     }
 
     public void setException(Exception exception) {
+        exception.printStackTrace();
         this.exception = exception;
         if (this.socketState == SocketState.ERROR) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    PushError();
-                }
-            });
+            PushError();
         }
     }
     //region Private Helper
@@ -266,9 +263,7 @@ public class WSSocket implements AsyncHttpClient.WebSocketConnectCallback,
      * @param message {@link String} instance to store in the queue.
      */
     private void AddToQueue(String message) {
-        synchronized (lockQueueMessage) {
-            queueMsg.add(message);
-        }
+        queueMsg.add(message);
     }
 
     /**
@@ -277,13 +272,11 @@ public class WSSocket implements AsyncHttpClient.WebSocketConnectCallback,
      */
     private void ProcessQueueMessage() {
         if (this.socketState == SocketState.CONNECTED && this.websocket != null) {
-            synchronized (lockQueueMessage) {
-                Iterator<String> iterator = queueMsg.iterator();
-                while (iterator.hasNext()) {
-                    String msg = iterator.next();
-                    this.websocket.send(msg);
-                    iterator.remove();
-                }
+            Iterator<String> iterator = queueMsg.iterator();
+            while (iterator.hasNext()) {
+                String msg = iterator.next();
+                this.websocket.send(msg);
+                iterator.remove();
             }
         }
     }
@@ -292,10 +285,8 @@ public class WSSocket implements AsyncHttpClient.WebSocketConnectCallback,
      * Helper to propagate the current {@code state} of the socket to all register {@link ISocketListener}.
      */
     private void PushSocketState() {
-        synchronized (lockListener) {
-            for (ISocketListener listener : listeners) {
-                listener.OnNewSocketState(this.socketState);
-            }
+        for (ISocketListener listener : listeners) {
+            listener.OnNewSocketState(this.socketState);
         }
     }
 
@@ -306,16 +297,13 @@ public class WSSocket implements AsyncHttpClient.WebSocketConnectCallback,
      * @param message {@link String} message
      */
     private void PushMessage(String message) {
-        synchronized (lockListener) {
-            for (ISocketListener listener : listeners) {
-                listener.OnNewMessage(message);
-            }
+        for (ISocketListener listener : listeners) {
+            listener.OnNewMessage(message);
         }
     }
 
     /**
-     * Helper to propagate the the state the of the Websocket. This propagation is done
-     * on a new {@link Thread} each time a new state is set.
+     * Helper to propagate the the state the of the Websocket.
      *
      * @param socketState {@link SocketState} value to
      */
@@ -323,17 +311,14 @@ public class WSSocket implements AsyncHttpClient.WebSocketConnectCallback,
         boolean doPush = this.socketState != socketState;
         this.socketState = socketState;
         if (doPush) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    PushSocketState();
-                }
-            }).start();
+            PushSocketState();
         }
     }
 
     /**
-     * @return
+     * Shorter to test if the {@code socketState} is equal to {@code SocketState#CONNECTED}.
+     *
+     * @return boolean value of comparison.
      */
     protected boolean isSocketConnected() {
         return this.socketState == SocketState.CONNECTED;
@@ -344,10 +329,8 @@ public class WSSocket implements AsyncHttpClient.WebSocketConnectCallback,
      * the {@code listeners} list is locked to avoid {@link java.util.ConcurrentModificationException}.
      */
     private void PushError() {
-        synchronized (lockListener) {
-            for (ISocketListener listener : listeners) {
-                listener.OnError(exception);
-            }
+        for (ISocketListener listener : listeners) {
+            listener.OnError(exception);
         }
     }
 
@@ -357,6 +340,14 @@ public class WSSocket implements AsyncHttpClient.WebSocketConnectCallback,
 
     public SocketState getSocketState() {
         return socketState;
+    }
+
+    public void Connect(String host, int port) {
+        Connect("ws", host, port, null);
+    }
+
+    public void SecureConnect(String host, int port) {
+        Connect("wss", host, port, null);
     }
     //endregion
 }

@@ -26,11 +26,14 @@ package ca.teyssedre.paranoya.messaging;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.IOException;
 
 import ca.teyssedre.paranoya.messaging.enums.SocketMessageType;
 
@@ -43,11 +46,15 @@ public class SocketMessage<T> {
     private int serial;
     private String signature;
 
+    public SocketMessage() {
+    }
+
     public SocketMessage(SocketMessageType type, T data, String destination) {
         this.type = type;
         this.data = data;
         this.destination = destination;
     }
+
     public SocketMessage(SocketMessageType type, T data, String destination, String signature) {
         this.type = type;
         this.data = data;
@@ -125,11 +132,13 @@ public class SocketMessage<T> {
             ObjectMapper mapper = new ObjectMapper();
             mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
             mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-            JSONObject d = new JSONObject(mapper.writeValueAsString(data));
+            if (data != null) {
+                JSONObject d = new JSONObject(mapper.writeValueAsString(data));
+                jsonObject.put("data", d);
+            }
             jsonObject.put("type", type.getValue());
             jsonObject.put("destination", destination);
             jsonObject.put("signature", signature);
-            jsonObject.put("data", d);
             jsonObject.put("origin", origin);
             jsonObject.put("serial", serial);
         } catch (JSONException | JsonProcessingException e) {
@@ -154,37 +163,20 @@ public class SocketMessage<T> {
         return SocketMessageType.Unknown;
     }
 
-    public static SocketMessage parse(String raw)
-    {
-        SocketMessage msg = null;
+    public static <E> SocketMessage<E> parse(String raw) {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        SocketMessage<E> msg = null;
         try {
-            JSONObject json = new JSONObject(raw);
-            String destination = json.getString("destination");
-            String origin = json.getString("origin");
-            String signature = json.getString("signature");
-            int serial = json.getInt("serial");
-            int typ = json.getInt("type");
-            msg = new SocketMessage(SocketMessageType.parse(typ), destination, origin, signature, serial);
-        } catch (JSONException e) {
+            msg = mapper.readValue(raw, new TypeReference<SocketMessage<E>>(){});
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return msg;
     }
 
-    public static <E> SocketMessage<E> parse(String raw, Class<E> type) {
-        SocketMessage<E> msg = null;
-        try {
-            JSONObject json = new JSONObject(raw);
-            String destination = json.getString("destination");
-            String origin = json.getString("origin");
-            String signature = json.getString("signature");
-            int serial = json.getInt("serial");
-            int typ = json.getInt("type");
-            Object data = json.get("data");
-            msg = new SocketMessage<>(SocketMessageType.parse(typ), type.cast(data), destination, origin, signature, serial);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return msg;
+    public String getSignature() {
+        return signature;
     }
 }

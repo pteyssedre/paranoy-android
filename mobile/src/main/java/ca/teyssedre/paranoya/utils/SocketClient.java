@@ -1,18 +1,17 @@
-/**
+/*
  * The MIT License (MIT)
- * <p/>
- * Copyright (c) 2015 Pierre Teyssedre
- * <p/>
+ *
+ * Copyright (c) 2015. Pierre Teyssedre
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * <p/>
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * <p/>
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -25,163 +24,122 @@
 package ca.teyssedre.paranoya.utils;
 
 import android.app.Activity;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
-import android.os.IBinder;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.View;
 
-import java.security.GeneralSecurityException;
 import java.security.PublicKey;
 import java.util.Random;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
-import ca.teyssedre.crypto.Crypto;
 import ca.teyssedre.crypto.views.UIHelper;
 import ca.teyssedre.paranoya.messaging.SocketMessage;
-import ca.teyssedre.paranoya.messaging.data.KeyMessage;
-import ca.teyssedre.paranoya.messaging.data.User;
 import ca.teyssedre.paranoya.messaging.enums.SocketMessageType;
-import ca.teyssedre.wsservice.WebSocketBinder;
-import ca.teyssedre.wsservice.WebSocketService;
 import ca.teyssedre.wsservice.contract.ISocketListener;
 import ca.teyssedre.wsservice.enums.SocketState;
+import ca.teyssedre.wsservice.socket.WSSocket;
+import ca.teyssedre.wsservice.socket.WebSocketService;
 
 public class SocketClient implements ISocketListener {
 
     public static final String TAG = "SocketClient";
+
+    private final Handler uiThread;
+    private final ThreadPoolExecutor background;
+    private final IdentityHelper idHelper;
+    private IParanoyaMessageListener listner;
+
     //region Properties
-    private Activity activity;
-    private WebSocketBinder binder;
+    private Context context;
+    private WSSocket socket;
     private Snackbar snackbar;
     private int msgSerial;
-    private boolean _needConnect = false;
     private boolean _connectCalled = false;
-    private ServiceConnection serviceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            binder = (WebSocketBinder) service;
-            binder.AddListener(SocketClient.this);
-            if (_needConnect) {
-                Connect();
-            }
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            binder = null;
-        }
-    };
     private PublicKey serverKey;
+    private PMessageLogic PMLogic;
     //endregion
 
     //region Constructor
-    public SocketClient(Activity activity) {
-        this.activity = activity;
+    public SocketClient(Context context) {
+        this.context = context;
         this.msgSerial = new Random().nextInt();
-    }
-    //endregion
-
-    //region Bound & Unbound to Service
-
-    /**
-     * In order to make the {@link ca.teyssedre.wsservice.WSSocket} available to any {@link android.app.Activity},
-     * the socket is expose through a service {@link ca.teyssedre.wsservice.WebSocketService}. This
-     * function will explicitly bound a {@link android.app.Activity} to the service.
-     */
-    @Override
-    public void boundToService() {
-        Intent intent = new Intent(this.activity, WebSocketService.class);
-        this.activity.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
-    }
-
-    /**
-     * To prevent multi binding issue and proper dispose of variables, this function will unbound a
-     * {@link android.app.Activity} to the {@link ca.teyssedre.wsservice.WebSocketService}.
-     */
-    @Override
-    public void unboundToService() {
-        if (this.activity != null) {
-            this.activity.unbindService(serviceConnection);
-        }
+        this.uiThread = new Handler(Looper.getMainLooper());
+        this.socket = new WSSocket();
+        this.socket.AddListener(this);
+        int i = Runtime.getRuntime().availableProcessors();
+        LinkedBlockingDeque<Runnable> queue = new LinkedBlockingDeque<>();
+        this.background = new ThreadPoolExecutor(1, i, 1, TimeUnit.SECONDS, queue);
+        this.PMLogic = new PMessageLogic();
+        this.idHelper = new IdentityHelper();
     }
     //endregion
 
     //region OnNewState
 
     /**
-     * The service {@link ca.teyssedre.wsservice.WebSocketService} will notify the current listener
+     * The service {@link WebSocketService} will notify the current listener
      * by this method.
      *
      * @param state {@link SocketState} value.
      */
     @Override
-    public void OnNewSocketState(SocketState state) {
-        switch (state) {
-            case INITIALIZE:
-                Snack("Initializing");
-                break;
-            case CONNECTING:
-                Snack("Connecting");
-                break;
-            case CONNECTED:
-                Snack("Connected", 2000);
-                // TODO: Send online status to server
-                Send(NewMessage(SocketMessageType.OnlineStatus, IdentityHelper.getCurrentUser(), ""));
-                break;
-            case FAILED:
-                Snack("Fail to connect ...");
-                Exception exception = getException();
-                if (exception != null) {
-                    exception.printStackTrace();
+    public void OnNewSocketState(final SocketState state) {
+        background.execute(new Runnable() {
+            @Override
+            public void run() {
+                switch (state) {
+                    case INITIALIZE:
+                        Snack("Initializing");
+                        break;
+                    case CONNECTING:
+                        Snack("Connecting");
+                        break;
+                    case CONNECTED:
+                        Snack("Connected", 2000);
+                        // Send identity
+                        Send(NewMessage(SocketMessageType.OnlineStatus, idHelper.getCurrentUser()));
+                        break;
+                    case FAILED:
+                        Exception exception = getException();
+                        if (exception != null) {
+                            Log.e(TAG, exception.getMessage());
+                            Snack(exception.getMessage(), 4000);
+                        } else {
+                            Snack("Fail to connect ...", 4000);
+                        }
+                        break;
+                    default:
+                        Snack(state.toString(), 4000);
+                        break;
                 }
-                break;
-            default:
-                Snack(state.toString(), 4000);
-                break;
-        }
+            }
+        });
     }
     //endregion
 
     //region OnMessage
 
     /**
-     * On every message received by the {@link ca.teyssedre.wsservice.WebSocketService} the current
+     * On every message received by the {@link WebSocketService} the current
      * listener will be notify through this method.
      *
      * @param message {@link String} message serialized.
      */
     @Override
-    public void OnNewMessage(String message) {
-        SocketMessageType type = SocketMessage.parseType(message);
-        switch (type) {
-            case OnlineStatus:
-                //TODO: Push to contact list
-                SocketMessage<User> parsed = SocketMessage.parse(message, User.class);
-                System.out.println(parsed);
-                break;
-            case KeyExchange:
-                SocketMessage<KeyMessage> keyMessage = SocketMessage.parse(message, KeyMessage.class);
-                if (keyMessage.getData().isSystem()) {
-                    try {
-                        serverKey = Crypto.StringToPublicKey(keyMessage.getData().getPublicKey());
-                    } catch (GeneralSecurityException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    //TODO: prompt dialog
-                }
-                break;
-            case KeyValidation:
-                //TODO: Prompt
-                SocketMessage.parse(message);
-                break;
-            case DataText:
-                break;
-        }
+    public void OnNewMessage(final String message) {
+        Log.d(TAG, "Incoming message :" + message);
+        background.execute(new Runnable() {
+            @Override
+            public void run() {
+                PMLogic.OnMessage(message);
+            }
+        });
     }
     //endregion
 
@@ -192,15 +150,17 @@ public class SocketClient implements ISocketListener {
      */
     @Override
     public void Connect() {
-        if (binder != null) {
-            if (binder.getSocketState() == SocketState.INITIALIZE && !_connectCalled) {
-                //JSON REST SOAP Whatever ... Database maybe ...
-                binder.Connect("teyssedre.ca", 4445, null);
-                _needConnect = false;
-                _connectCalled = true;
-            }
-        } else {
-            _needConnect = true;
+        if (socket != null) {
+            background.execute(new Runnable() {
+                @Override
+                public void run() {
+                    if (socket.getSocketState() == SocketState.INITIALIZE && !_connectCalled) {
+//                        socket.SecureConnect("teyssedre.ca", 4445);
+                        socket.Connect("10.5.2.14", 4445);
+                        _connectCalled = true;
+                    }
+                }
+            });
         }
     }
 
@@ -210,21 +170,12 @@ public class SocketClient implements ISocketListener {
      */
     @Override
     public void Disconnect() {
-        if (this.binder != null) {
-            this.binder.Disconnect();
-            this.binder = null;
+        if (this.socket != null) {
+            this.socket.Disconnect();
+            this.socket = null;
         }
     }
     //endregion
-
-    public void Send(SocketMessage message) {
-        if (binder != null && binder.getSocketState() == SocketState.CONNECTED) {
-            Log.d(TAG, "Outgoing message :" + message.toString());
-            binder.Send(message.toString());
-        } else {
-            //TODO: Queue messages ?
-        }
-    }
 
     //region OnError
 
@@ -236,11 +187,11 @@ public class SocketClient implements ISocketListener {
      */
     @Override
     public Exception getException() {
-        return this.binder.getException();
+        return this.socket.getException();
     }
 
     /**
-     * When an error is raise in the {@link ca.teyssedre.wsservice.WebSocketService} the exception is
+     * When an error is raise in the {@link WebSocketService} the exception is
      * push back through this function.
      *
      * @param exception {@link Exception} instance to provide information about the error raised.
@@ -251,35 +202,65 @@ public class SocketClient implements ISocketListener {
     }
     //endregion
 
+    //region Send Message
+    public void Send(final SocketMessage message) {
+        background.execute(new Runnable() {
+            @Override
+            public void run() {
+                if (socket != null && socket.getSocketState() == SocketState.CONNECTED) {
+                    Log.d(TAG, "Outgoing message :" + message.toString());
+                    socket.Send(message.toString());
+                } else {
+                    Log.e(TAG, "Trying to send message " + message.toString());
+                    //TODO: Queue messages ?
+                }
+            }
+        });
+    }
+
+    public <T> SocketMessage<T> NewMessage(SocketMessageType type, T data) {
+        SocketMessage<T> message = new SocketMessage<>(type, data, null);
+        message.setSerial(msgSerial);
+        message.setOrigin(""); //TODO: set socket id ... ?
+        msgSerial++;
+        return message;
+    }
+
     public <T> SocketMessage<T> NewMessage(SocketMessageType type, T data, String destination) {
         SocketMessage<T> message = new SocketMessage<>(type, data, destination);
         message.setSerial(msgSerial);
         message.setOrigin(""); //TODO: set socket id ... ?
+        msgSerial++;
         return message;
     }
+    //endregion
 
     //region UI Helpers
 
     /**
-     * Shorter to execute {@code runnable} inside the UI Thread of the current {@code activity}.
+     * Shorter to execute {@code runnable} inside the UI Thread of the current {@code context}.
      *
      * @param runnable {@link Runnable} to execute inside the UI Thread.
      */
     private void RunOnUI(Runnable runnable) {
-        if (this.activity != null) {
-            this.activity.runOnUiThread(runnable);
+        if (this.context != null) {
+            this.uiThread.post(runnable);
         }
     }
 
     /**
-     * Helper to retrieved the {@link CoordinatorLayout} of the current {@code activity} instance.
+     * Helper to retrieved the {@link CoordinatorLayout} of the current {@code context} instance.
      *
      * @return {@link View} that should be the instance of type {@link CoordinatorLayout}.
      */
     private View getRootView() {
-        if (this.activity != null) {
-            UIHelper uiHelper = UIHelper.getInstance(this.activity);
-            return uiHelper.retrievedViewOfType(this.activity, CoordinatorLayout.class);
+        if (this.context != null) {
+            try {
+                UIHelper uiHelper = UIHelper.getInstance(this.context);
+                return uiHelper.retrievedViewOfType((Activity) this.context, CoordinatorLayout.class);
+            } catch (ClassCastException ex) {
+                Log.e(TAG, "Can't cast context into activity");
+            }
         }
         return null;
     }
@@ -299,7 +280,7 @@ public class SocketClient implements ISocketListener {
      * Helper to display the {@code snackbar}. If it's already displayed only the text will be changed.
      * The {@code snackbar} is created if needed and set to {@link Snackbar#LENGTH_INDEFINITE}.
      * To ensure the proper display of the {@code snackbar}, the {@link #getRootView()} method is use and
-     * all the interaction with it is done in the UI Thread if the {@code activity}.
+     * all the interaction with it is done in the UI Thread if the {@code context}.
      *
      * @param text {@link String} text to display
      */
@@ -327,25 +308,15 @@ public class SocketClient implements ISocketListener {
      */
     private void EatSnack(final int delay) {
         if (getRootView() != null) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Thread.sleep(delay);
-                        RunOnUI(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (snackbar != null) {
-                                    snackbar.dismiss();
-                                    snackbar = null;
-                                }
-                            }
-                        });
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+            if (snackbar != null) {
+                snackbar.getView().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        snackbar.dismiss();
+                        snackbar = null;
                     }
-                }
-            }).start();
+                }, delay);
+            }
         }
     }
     //endregion
@@ -356,11 +327,14 @@ public class SocketClient implements ISocketListener {
      */
     @Override
     public void Dispose() {
-        if (this.binder != null) {
-            this.binder.RemoveListener(SocketClient.this);
+        if (this.socket != null) {
+            this.socket.RemoveListener(SocketClient.this);
             Disconnect();
         }
-        this.activity = null;
+        this.context = null;
     }
 
+    public void UpdateActivity(Activity activity) {
+        this.context = activity;
+    }
 }

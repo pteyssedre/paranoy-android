@@ -3,19 +3,21 @@ package ca.teyssedre.paranoya.messaging.data;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class KeyMessage implements Parcelable {
 
-    private String publicKey;
-    private String privateKey;
-    private boolean system;
+    private KeyElement Key;
+    private String id;
+    private String[] connected;
 
     public KeyMessage() {
     }
 
     protected KeyMessage(Parcel in) {
-        publicKey = in.readString();
-        privateKey = in.readString();
-        system = in.readByte() != 0;
+        Key = in.readParcelable(KeyElement.class.getClassLoader());
+        id = in.readString();
+        connected = in.createStringArray();
     }
 
     public static final Creator<KeyMessage> CREATOR = new Creator<KeyMessage>() {
@@ -30,39 +32,58 @@ public class KeyMessage implements Parcelable {
         }
     };
 
-    public String getPublicKey() {
-        return publicKey;
+    public KeyElement getKey() {
+        return Key;
     }
 
-    public void setPublicKey(String publicKey) {
-        this.publicKey = publicKey;
+    public void setKey(KeyElement key) {
+        Key = key;
     }
 
-    public String getPrivateKey() {
-        return privateKey;
+    public String getId() {
+        return id;
     }
 
-    public void setPrivateKey(String privateKey) {
-        this.privateKey = privateKey;
+    public void setId(String id) {
+        this.id = id;
     }
 
+    public String[] getConnected() {
+        return connected;
+    }
+
+    public void setConnected(String[] connected) {
+        this.connected = connected;
+    }
+
+    @JsonIgnore
     public boolean isSystem() {
-        return system;
+        return Key != null && Key.getSystem() == 1;
     }
 
-    public void setSystem(boolean system) {
-        this.system = system;
-    }
-
+    /**
+     * Describe the kinds of special objects contained in this Parcelable's
+     * marshalled representation.
+     *
+     * @return a bitmask indicating the set of special object types marshalled
+     * by the Parcelable.
+     */
     @Override
     public int describeContents() {
         return 0;
     }
 
+    /**
+     * Flatten this object in to a Parcel.
+     *
+     * @param dest  The Parcel in which the object should be written.
+     * @param flags Additional flags about how the object should be written.
+     *              May be 0 or {@link #PARCELABLE_WRITE_RETURN_VALUE}.
+     */
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(publicKey);
-        dest.writeString(privateKey);
-        dest.writeByte((byte) (system ? 1 : 0));
+        dest.writeParcelable(Key, flags);
+        dest.writeString(id);
+        dest.writeStringArray(connected);
     }
 }

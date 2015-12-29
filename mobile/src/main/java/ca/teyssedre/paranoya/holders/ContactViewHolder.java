@@ -49,11 +49,11 @@ public class ContactViewHolder extends RecyclerView.ViewHolder implements View.O
 
     public ContactViewHolder(View itemView) {
         super(itemView);
+        this.itemView.setOnClickListener(this);
+        this.itemView.setOnLongClickListener(this);
         avatar = (ImageView) itemView.findViewById(R.id.user_avatar);
         pseudo = (TextView) itemView.findViewById(R.id.user_pseudo);
         message = (TextView) itemView.findViewById(R.id.user_message);
-        itemView.setOnClickListener(this);
-        itemView.setOnLongClickListener(this);
         RelativeLayout wrapper = (RelativeLayout) itemView.findViewById(R.id.wrapper);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             wrapper.setBackground(itemView.getContext().getDrawable(R.drawable.ripple));

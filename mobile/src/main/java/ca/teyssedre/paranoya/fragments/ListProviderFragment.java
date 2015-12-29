@@ -27,6 +27,7 @@ package ca.teyssedre.paranoya.fragments;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,8 +35,13 @@ import android.view.ViewGroup;
 import ca.teyssedre.crypto.Crypto;
 import ca.teyssedre.paranoya.R;
 import ca.teyssedre.paranoya.adapters.StringRecycleAdapter;
+import ca.teyssedre.paranoya.holders.SingleStringViewHolder;
 
-public class ListProviderFragment extends ParanoyaFragment {
+public class ListProviderFragment extends ParanoyaFragment implements OnItemClickHolder<SingleStringViewHolder>, View.OnClickListener {
+
+    private static final String TAG = "ListProvider";
+    private StringRecycleAdapter adapter;
+    private RecyclerView list;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -47,17 +53,54 @@ public class ListProviderFragment extends ParanoyaFragment {
         View root = super.onCreateView(inflater, container, savedInstanceState);
         if (root == null) {
             root = inflater.inflate(R.layout.provider_fragment, container, false);
-            RecyclerView list = (RecyclerView) root.findViewById(R.id.provider_list);
+            list = (RecyclerView) root.findViewById(R.id.provider_list);
             LinearLayoutManager llm = new LinearLayoutManager(getActivity());
             llm.setOrientation(LinearLayoutManager.VERTICAL);
             list.setLayoutManager(llm);
-            StringRecycleAdapter adapter = new StringRecycleAdapter();
+            list.setOnClickListener(this);
+            adapter = new StringRecycleAdapter();
+            adapter.setItemClickListener(this);
             adapter.setData(Crypto.GetProvidersNames());
             list.setAdapter(adapter);
             if (adapter.getItemCount() > 0) {
-                root.findViewById(R.id.provider_empty).setVisibility(View.GONE);
+//                root.findViewById(R.id.provider_empty).setVisibility(View.GONE);
             }
         }
         return root;
+    }
+
+    /**
+     * Called when a view has been clicked.
+     *
+     * @param v        The view that was clicked.
+     * @param position position of the item in the list.
+     * @param item     view holder bind to the view.
+     */
+    @Override
+    public void OnItemClick(View v, int position, SingleStringViewHolder item) {
+        Log.d(TAG, "Click on " + adapter.getItem(position));
+    }
+
+    /**
+     * Called when a view has been long clicked.
+     *
+     * @param v        The view that was clicked.
+     * @param position position of the item in the list.
+     * @param item     view holder bind to the view.
+     * @return boolean
+     */
+    @Override
+    public boolean OnItemLongClick(View v, int position, SingleStringViewHolder item) {
+        return false;
+    }
+
+    /**
+     * Called when a view has been clicked.
+     *
+     * @param v The view that was clicked.
+     */
+    @Override
+    public void onClick(View v) {
+        Log.d(TAG, "Testing " + v.toString());
     }
 }

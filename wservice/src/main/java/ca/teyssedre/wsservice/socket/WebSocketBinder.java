@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package ca.teyssedre.wsservice;
+package ca.teyssedre.wsservice.socket;
 
 import android.os.Binder;
 
@@ -116,7 +116,7 @@ public class WebSocketBinder extends Binder {
     //</editor-fold>
 
     /**
-     * Every {@code listener} which wants to receive notification from the {@link ca.teyssedre.wsservice.WebSocketService}
+     * Every {@code listener} which wants to receive notification from the {@link WebSocketService}
      * service must be register through this method.
      *
      * @param listener {@link ISocketListener} instance to register.
@@ -127,7 +127,7 @@ public class WebSocketBinder extends Binder {
 
     /**
      * When a {@code listener} doesn't want to receive notification it can be remove from the
-     * {@link ca.teyssedre.wsservice.WebSocketService} listeners list.
+     * {@link WebSocketService} listeners list.
      *
      * @param listener {@link ISocketListener} instance to remove.
      */
@@ -137,7 +137,7 @@ public class WebSocketBinder extends Binder {
 
     /**
      * Disconnect the socket and reset the {@link ca.teyssedre.wsservice.enums.SocketState} of the
-     * {@link ca.teyssedre.wsservice.WebSocketService}.
+     * {@link WebSocketService}.
      */
     public void Disconnect() {
         websocket.Disconnect();
@@ -145,7 +145,7 @@ public class WebSocketBinder extends Binder {
 
     /**
      * In order to diagnose {@link ca.teyssedre.wsservice.enums.SocketState#FAILED} or {@link ca.teyssedre.wsservice.enums.SocketState#ERROR}
-     * the {@link ca.teyssedre.wsservice.WebSocketService} expose an exception property.
+     * the {@link WebSocketService} expose an exception property.
      *
      * @return {@link Exception} catch if one has been rise by the socket.
      */
@@ -154,11 +154,15 @@ public class WebSocketBinder extends Binder {
     }
 
     /**
-     * Getter of the {@link SocketState} of the {@link ca.teyssedre.wsservice.WebSocketService}.
+     * Getter of the {@link SocketState} of the {@link WebSocketService}.
      *
      * @return {@link SocketState} current value.
      */
     public SocketState getSocketState() {
         return websocket.getSocketState();
+    }
+
+    public void Connect(String host, int port) {
+        Connect(host,port,null);
     }
 }

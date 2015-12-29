@@ -25,11 +25,12 @@
 package ca.teyssedre.wsservice.contract;
 
 import ca.teyssedre.wsservice.enums.SocketState;
+import ca.teyssedre.wsservice.socket.WebSocketService;
 
 public interface ISocketListener {
 
     /**
-     * The service {@link ca.teyssedre.wsservice.WebSocketService} will notify the current listener
+     * The service {@link WebSocketService} will notify the current listener
      * by this method.
      *
      * @param state {@link SocketState} value.
@@ -37,7 +38,7 @@ public interface ISocketListener {
     void OnNewSocketState(SocketState state);
 
     /**
-     * On every message recieved by the {@link ca.teyssedre.wsservice.WebSocketService} the current
+     * On every message recieved by the {@link WebSocketService} the current
      * listener will be notify through this method.
      *
      * @param message {@link String} message serialized.
@@ -45,7 +46,7 @@ public interface ISocketListener {
     void OnNewMessage(String message);
 
     /**
-     * When an error is raise in the {@link ca.teyssedre.wsservice.WebSocketService} the exception is
+     * When an error is raise in the {@link WebSocketService} the exception is
      * push back through this function.
      *
      * @param exception {@link Exception} instance to provide information about the error raised.
@@ -63,19 +64,6 @@ public interface ISocketListener {
      * {@link Exception}.
      */
     void Disconnect();
-
-    /**
-     * In order to make the {@link ca.teyssedre.wsservice.WSSocket} available to any {@link android.app.Activity},
-     * the socket is expose through a service {@link ca.teyssedre.wsservice.WebSocketService}. This
-     * function will explicitly bound a {@link android.app.Activity} to the service.
-     */
-    void boundToService();
-
-    /**
-     * To prevent multi binding issue and proper dispose of variables, this function will unbound a
-     * {@link android.app.Activity} to the {@link ca.teyssedre.wsservice.WebSocketService}.
-     */
-    void unboundToService();
 
     /**
      * In case of {@link SocketState#FAILED} the listener can request the {@code exception} for

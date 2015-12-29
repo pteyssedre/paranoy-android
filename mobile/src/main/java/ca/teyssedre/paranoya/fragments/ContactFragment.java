@@ -50,6 +50,7 @@ public class ContactFragment extends ParanoyaFragment implements OnItemClickHold
     private RecyclerView list;
     private ContactAdapter adapter;
     private ArrayList<User> contacts;
+    private View emptyView;
 
     public ContactFragment() {
         contacts = new ArrayList<>();
@@ -62,12 +63,13 @@ public class ContactFragment extends ParanoyaFragment implements OnItemClickHold
         if (v == null) {
             v = inflater.inflate(R.layout.contact_fragment, container, false);
             list = (RecyclerView) v.findViewById(R.id.contact_list);
+            emptyView = v.findViewById(R.id.contact_empty);
             adapter = new ContactAdapter();
             LinearLayoutManager llm = new LinearLayoutManager(getActivity());
             llm.setOrientation(LinearLayoutManager.VERTICAL);
             list.setLayoutManager(llm);
-            list.setAdapter(adapter);
             adapter.setItemClickListener(this);
+            list.setAdapter(adapter);
         }
         return v;
     }
@@ -78,6 +80,7 @@ public class ContactFragment extends ParanoyaFragment implements OnItemClickHold
         tryToRestoreView(savedInstanceState);
         List<User> allUsers = ParanoyaUserSource.getInstance().getAllUsers();
         adapter.setData(allUsers);
+        emptyView.setVisibility(allUsers.size() > 0 ? View.GONE : View.VISIBLE);
         adapter.notifyDataSetChanged();
     }
 

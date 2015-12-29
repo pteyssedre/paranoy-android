@@ -92,6 +92,15 @@ public class ParanoyaUserSource extends DBSource {
 //        lockUsers = new Object();
     }
 
+    public void initialization(){
+        try {
+            open();
+            close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static ParanoyaUserSource getInstance(Context context) {
         if (instance == null) {
             instance = new ParanoyaUserSource(context);
@@ -184,7 +193,6 @@ public class ParanoyaUserSource extends DBSource {
     //<editor-fold desc="Public Methods">
 
     public void getContactsList() {
-
         try {
             open();
             String query = "SELECT * FROM " + USERS_TABLE_NAME + " u INNER JOIN " + RELATION_KEY_TABLE_NAME + " r " +

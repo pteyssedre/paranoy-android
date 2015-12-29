@@ -37,9 +37,6 @@ public class CryptoStorageHelper extends SQLiteOpenHelper {
     public static final String STORAGE_NAME = "crypto_storage.db";
     public static final int STORAGE_VERSION = 1;
 
-    private Context context;
-    private List<String> queriesOnCreate;
-    private List<String> queriesOnUpgrade;
     private List<BaseDataSource> dataSources;
 
     private final Object lock;
@@ -83,9 +80,6 @@ public class CryptoStorageHelper extends SQLiteOpenHelper {
      */
     private CryptoStorageHelper(Context context) {
         super(context, STORAGE_NAME, null, STORAGE_VERSION);
-        this.context = context;
-        queriesOnCreate = new ArrayList<>();
-        queriesOnUpgrade = new ArrayList<>();
         dataSources = new ArrayList<>();
         lock = new Object();
     }
@@ -99,8 +93,10 @@ public class CryptoStorageHelper extends SQLiteOpenHelper {
      */
     @Override
     public void onCreate(SQLiteDatabase db) {
-        for (BaseDataSource ds : dataSources) {
-            db.execSQL(ds.CreateTableQuery());
+        synchronized (lock) {
+            for (BaseDataSource ds : dataSources) {
+                db.execSQL(ds.CreateTableQuery());
+            }
         }
     }
 
@@ -126,8 +122,10 @@ public class CryptoStorageHelper extends SQLiteOpenHelper {
      */
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        for (BaseDataSource ds : dataSources) {
-            db.execSQL(ds.UpgradeTableQuery(oldVersion, newVersion));
+        synchronized (lock) {
+            for (BaseDataSource ds : dataSources) {
+                db.execSQL(ds.UpgradeTableQuery(oldVersion, newVersion));
+            }
         }
     }
 

@@ -22,15 +22,13 @@
  * SOFTWARE.
  */
 
-package ca.teyssedre.wsservice;
+package ca.teyssedre.wsservice.socket;
 
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-
-import java.util.List;
 
 import ca.teyssedre.wsservice.contract.ISocketListener;
 import ca.teyssedre.wsservice.contract.IWebSocketService;
@@ -64,13 +62,13 @@ public class WebSocketService extends Service implements IWebSocketService {
     @Override
     public IBinder onBind(Intent intent) {
         if (socket == null) {
-            socket = WSSocket.getInstance();
+            socket = new WSSocket();
         }
         return new WebSocketBinder(this);
     }
 
     /**
-     * Every {@code listener} which wants to receive notification from the {@link ca.teyssedre.wsservice.WebSocketService}
+     * Every {@code listener} which wants to receive notification from the {@link WebSocketService}
      * service must be register through this method.
      *
      * @param listener {@link ISocketListener} instance to register.
@@ -95,7 +93,7 @@ public class WebSocketService extends Service implements IWebSocketService {
     }
 
     /**
-     * When the {@link ca.teyssedre.wsservice.WebSocketService} recieved a serialized message
+     * When the {@link WebSocketService} recieved a serialized message
      * it will try send it if the socket is open. Otherwise the message will be queued and process
      * when the connection will be open.
      *
@@ -108,7 +106,7 @@ public class WebSocketService extends Service implements IWebSocketService {
 
     /**
      * Disconnect the socket and reset the {@link ca.teyssedre.wsservice.enums.SocketState} of the
-     * {@link ca.teyssedre.wsservice.WebSocketService}.
+     * {@link WebSocketService}.
      */
     @Override
     public void Disconnect() {
@@ -117,7 +115,7 @@ public class WebSocketService extends Service implements IWebSocketService {
 
     /**
      * When a {@code listener} doesn't want to receive notification it can be remove from the
-     * {@link ca.teyssedre.wsservice.WebSocketService} listeners list.
+     * {@link WebSocketService} listeners list.
      *
      * @param listener {@link ISocketListener} instance to remove.
      */
@@ -140,7 +138,7 @@ public class WebSocketService extends Service implements IWebSocketService {
 
     /**
      * In order to diagnose {@link ca.teyssedre.wsservice.enums.SocketState#FAILED} or {@link ca.teyssedre.wsservice.enums.SocketState#ERROR}
-     * the {@link ca.teyssedre.wsservice.WebSocketService} expose an exception property.
+     * the {@link WebSocketService} expose an exception property.
      *
      * @return {@link Exception} catch if one has been rise by the socket.
      */
@@ -150,7 +148,7 @@ public class WebSocketService extends Service implements IWebSocketService {
     }
 
     /**
-     * Getter of the {@link SocketState} of the {@link ca.teyssedre.wsservice.WebSocketService}.
+     * Getter of the {@link SocketState} of the {@link WebSocketService}.
      *
      * @return {@link SocketState} current value.
      */

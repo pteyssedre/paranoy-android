@@ -1,18 +1,18 @@
 /**
  * The MIT License (MIT)
- * <p/>
+ * <p>
  * Copyright (c) 2015 Pierre Teyssedre
- * <p/>
+ * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * <p/>
+ * <p>
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * <p/>
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -24,6 +24,7 @@
 
 package ca.teyssedre.crypto;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
@@ -37,6 +38,7 @@ import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.PublicKey;
@@ -50,6 +52,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -70,8 +75,8 @@ public class Crypto {
     private UIHelper uiHelper;
     private KeyStoreDataSource keyStorage;
     private boolean dialogNotification = true;
-    private Handler handler;
-    private Thread background;
+    private ThreadPoolExecutor background;
+    private Handler uiThread;
 
     //region Singleton
     /**
@@ -86,22 +91,15 @@ public class Crypto {
      */
     private Crypto(Context context) {
         this.context = context;
-        this.uiHelper = UIHelper.getInstance(this.context);
         this.keyStorage = new KeyStoreDataSource(this.context);
-        this.background = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Looper.prepare();
-                handler = new Handler();
-                Looper.loop();
-            }
-        });
-        background.start();
+        int i = Runtime.getRuntime().availableProcessors();
+        LinkedBlockingDeque<Runnable> queue = new LinkedBlockingDeque<>();
+        this.background = new ThreadPoolExecutor(1, i, 1, TimeUnit.SECONDS, queue);
+        this.uiThread = new Handler(Looper.getMainLooper());
     }
 
     public void finalize() throws Throwable {
         super.finalize();
-        this.background = null;
     }
 
     /**
@@ -163,6 +161,13 @@ public class Crypto {
         return keyGen.generateKey();
     }
 
+    public static void GenerateBlowfishKey() throws NoSuchAlgorithmException {
+        KeyGenerator keyGen = KeyGenerator.getInstance("Blowfish");
+        SecretKey secretkey = keyGen.generateKey();
+
+
+    }
+
     /**
      * Helper to encrypt data from the parameter {@code data} using the algorithm AES and base on
      * the {@code key} as a {@link SecretKey}.
@@ -177,7 +182,7 @@ public class Crypto {
      * @throws IllegalBlockSizeException
      */
     public static byte[] EncryptWithAES(SecretKey key, byte[] data) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
-        Cipher c = Cipher.getInstance("AES");
+        Cipher c = Cipher.getInstance("AES/CBC/PKCS5Padding");
         c.init(Cipher.ENCRYPT_MODE, key);
         return c.doFinal(data);
     }
@@ -195,7 +200,7 @@ public class Crypto {
      * @throws IllegalBlockSizeException
      */
     public static byte[] DecryptWithAES(SecretKey key, byte[] data) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
-        Cipher c = Cipher.getInstance("AES");
+        Cipher c = Cipher.getInstance("AES/CBC/PKCS5Padding");
         c.init(Cipher.DECRYPT_MODE, key);
         return c.doFinal(data);
     }
@@ -211,7 +216,7 @@ public class Crypto {
      * @return {@link KeyPair} object instance that contains "public" key and "private" key.
      * @throws NoSuchAlgorithmException
      */
-    public static KeyPair GenerateRSAPair(int lenght) throws NoSuchAlgorithmException {
+    public static KeyPair GenerateRSAPair(int lenght) throws NoSuchAlgorithmException, NoSuchProviderException {
         if (lenght <= 1024) {
             lenght = 1024;
         } else if (lenght >= 4096) {
@@ -268,9 +273,10 @@ public class Crypto {
      * @throws InvalidKeyException
      * @throws SignatureException
      */
-    public static byte[] SignWithRSA(PrivateKey privateKey, byte[] data) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
+    public static byte[] SignWithRSA(PrivateKey privateKey, byte[] data) throws NoSuchAlgorithmException,
+            InvalidKeyException, SignatureException, NoSuchProviderException {
         byte[] signedBytes = null;
-        Signature s = Signature.getInstance("SHA1withRSA");
+        Signature s = Signature.getInstance("SHA256withRSA");
         s.initSign(privateKey);
         s.update(data);
         signedBytes = s.sign();
@@ -281,14 +287,15 @@ public class Crypto {
      * Helper to validate a signed content {@code data} using a {@link PublicKey} with the RSA algorithm.
      *
      * @param publicKey {@link PublicKey} object to validate the signature.
-     * @param data      {@link byte} array representing the encrypted data.
+     * @param data      {@link byte} array representing the signed data.
      * @return {@link boolean} value indicate if the signature is valid.
      * @throws NoSuchAlgorithmException
      * @throws InvalidKeyException
      * @throws SignatureException
      */
-    public static boolean ValidateSignatureWithRSA(PublicKey publicKey, byte[] data, byte[] signature) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
-        Signature s = Signature.getInstance("SHA1withRSA");
+    public static boolean ValidateSignatureWithRSA(PublicKey publicKey, byte[] data, byte[] signature)
+            throws NoSuchAlgorithmException, InvalidKeyException, SignatureException, NoSuchProviderException {
+        Signature s = Signature.getInstance("SHA256withRSA");
         s.initVerify(publicKey);
         s.update(data);
         return s.verify(signature);
@@ -364,13 +371,19 @@ public class Crypto {
      * @param data {@link String} value of the key.
      * @return {@link SecretKey} instance generated based on the parameter {@code data} and {@code algorithm}.
      */
-    public static SecretKey StringToSecretKey(String data) {
-        SecretKey key = null;
-        if (data != null && data.length() > 0) {
-            byte[] decoded = base64Decode(data);
-            key = new SecretKeySpec(decoded, 0, decoded.length, "AES");
-        }
-        return key;
+    public static SecretKey StringToAESKey(String data) {
+        byte[] decoded = base64Decode(data);
+        return new SecretKeySpec(decoded, 0, decoded.length, "AES");
+    }
+
+    /**
+     * Helper to "stringify" a {@link SecretKey} instance.
+     *
+     * @param key instance of {@link SecretKey} to stringify.
+     * @return Base64 {@link String} value.
+     */
+    public static String SecretKeyToString(SecretKey key) {
+        return base64Encode(key.getEncoded());
     }
 
     /**
@@ -463,11 +476,11 @@ public class Crypto {
 
     //region Helpers
 
-    private static byte[] base64Decode(String stored) {
+    public static byte[] base64Decode(String stored) {
         return Base64.decode(stored.getBytes(), Base64.DEFAULT);
     }
 
-    private static String base64Encode(byte[] packed) {
+    public static String base64Encode(byte[] packed) {
         return Base64.encodeToString(packed, 0, packed.length, Base64.DEFAULT);
     }
 
@@ -497,7 +510,7 @@ public class Crypto {
      */
     public void GenerateRSAPairAsync(final int min, final ICryptoCallback<KeyPair> callback) {
         ShowProgress("Generating RSA Pair " + min);
-        handler.post(new Runnable() {
+        background.execute(new Runnable() {
             @Override
             public void run() {
                 KeyPair stringKeyMap = null;
@@ -505,9 +518,17 @@ public class Crypto {
                     stringKeyMap = GenerateRSAPair(min);
                 } catch (NoSuchAlgorithmException e) {
                     e.printStackTrace();
+                } catch (NoSuchProviderException e) {
+                    e.printStackTrace();
                 }
                 if (callback != null) {
-                    callback.OnComplete(stringKeyMap);
+                    final KeyPair finalStringKeyMap = stringKeyMap;
+                    uiThread.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            callback.OnComplete(finalStringKeyMap);
+                        }
+                    });
                 }
                 HideProgress();
             }
@@ -521,7 +542,7 @@ public class Crypto {
      */
     public void RSAEncryptAsync(final PrivateKey privateKey, final byte[] data, final ICryptoCallback<byte[]> callback) {
         ShowProgress("Encrypting with RSA " + privateKey.getAlgorithm() + " " + privateKey.getFormat());
-        handler.post(new Runnable() {
+        background.execute(new Runnable() {
             @Override
             public void run() {
                 byte[] bytes = new byte[0];
@@ -549,7 +570,7 @@ public class Crypto {
      */
     public void RSADecryptAsync(final PublicKey publicKey, final byte[] data, final ICryptoCallback<byte[]> callback) {
         ShowProgress("Decrypting with RSA " + publicKey.getAlgorithm() + " " + publicKey.getFormat());
-        handler.post(new Runnable() {
+        background.execute(new Runnable() {
             @Override
             public void run() {
                 byte[] bytes = new byte[0];
@@ -572,7 +593,7 @@ public class Crypto {
      * @param callback {@link ICryptoCallback} will return a {@link List} of {@link KeySet}.
      */
     public void GetAllStoredKeysAsync(final ICryptoCallback<List<KeySet>> callback) {
-        handler.post(new Runnable() {
+        background.execute(new Runnable() {
             @Override
             public void run() {
                 List<KeySet> keySets = keyStorage.GetAllKeySet();
@@ -584,7 +605,7 @@ public class Crypto {
     }
 
     public void GetStoredKeysAsync(final long keyId, final ICryptoCallback<KeySet> callback) {
-        handler.post(new Runnable() {
+        background.execute(new Runnable() {
             @Override
             public void run() {
                 KeySet keyset = keyStorage.GetKeySetForId(keyId);
@@ -608,9 +629,17 @@ public class Crypto {
                 KeySet ks = new KeySet();
                 ks.setPrivateKey(data.getPrivate());
                 ks.setPublicKey(data.getPublic());
-                long l = keyStorage.AddRSAKeyPair(ks);
+                final long l = keyStorage.AddRSAKeyPair(ks);
+
                 if (callback != null) {
-                    callback.OnComplete(l > -1);
+                    final boolean b = l > -1;
+                    uiThread.post(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            callback.OnComplete(b);
+                        }
+                    });
                 }
             }
         });
@@ -677,7 +706,7 @@ public class Crypto {
     }
 
     public void DeleteKeyAsync(final long itemId, final ICryptoCallback<Boolean> callback) {
-        handler.post(new Runnable() {
+        background.execute(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -693,6 +722,10 @@ public class Crypto {
                 }
             }
         });
+    }
+
+    public void UpdateActivity(Activity activity) {
+        this.uiHelper = UIHelper.getInstance(activity);
     }
     //endregion
 

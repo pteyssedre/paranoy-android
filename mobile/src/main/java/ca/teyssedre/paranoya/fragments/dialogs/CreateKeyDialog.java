@@ -27,7 +27,6 @@ package ca.teyssedre.paranoya.fragments.dialogs;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,6 +42,8 @@ public class CreateKeyDialog extends DialogFragment {
     public static final String TAG = "CreateKeyDialog";
 
     private KeySet keySet;
+    private DialogPager pager;
+    private CreateKeyAdapter pagerAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,11 +56,16 @@ public class CreateKeyDialog extends DialogFragment {
         View root = super.onCreateView(inflater, container, savedInstanceState);
         if (root == null) {
             root = inflater.inflate(R.layout.create_keys, container, false);
-            ViewPager pager = (ViewPager) root.findViewById(R.id.keys_pager);
-            CreateKeyAdapter pagerAdapter = new CreateKeyAdapter(getChildFragmentManager());
+            pager = (DialogPager) root.findViewById(R.id.keys_pager);
+            pagerAdapter = new CreateKeyAdapter(getChildFragmentManager());
             pager.setAdapter(pagerAdapter);
         }
         return root;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
     }
 
     private void GenerateKey() {

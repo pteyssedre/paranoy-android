@@ -47,7 +47,7 @@ public class FragmentHelper {
 
 
     public <T extends ParanoyaFragment> T PushParanoyaFragment(String tag, Class<T> type) {
-        return PushFragmentIn(tag, type, R.id.content);
+        return PushParanoyaFragmentIn(tag, type, R.id.content);
     }
 
     public <T extends Fragment> T PushFragmentIn(String tag, Class<T> type, int resourceId) {
@@ -128,10 +128,15 @@ public class FragmentHelper {
         if (this.currentFragment == null) {
             return;
         }
-        if (this.currentFragment.fabAction != null) {
-            activity.LinkFabAction(this.currentFragment.fabAction);
-        } else {
-            activity.HideFab();
-        }
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (currentFragment.fabAction != null) {
+                    activity.LinkFabAction(currentFragment.fabAction);
+                } else {
+                    activity.HideFab();
+                }
+            }
+        });
     }
 }

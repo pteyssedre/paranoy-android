@@ -25,12 +25,13 @@
 package ca.teyssedre.wsservice.contract;
 
 import ca.teyssedre.wsservice.enums.SocketState;
+import ca.teyssedre.wsservice.socket.WebSocketService;
 
 public interface IWebSocketService {
 
 
     /**
-     * Every {@code listener} which wants to receive notification from the {@link ca.teyssedre.wsservice.WebSocketService}
+     * Every {@code listener} which wants to receive notification from the {@link WebSocketService}
      * service must be register through this method.
      *
      * @param listener {@link ISocketListener} instance to register.
@@ -58,7 +59,7 @@ public interface IWebSocketService {
     void Connect(String protocol, String hostname, int port, String path);
 
     /**
-     * When the {@link ca.teyssedre.wsservice.WebSocketService} recieved a serialized message
+     * When the {@link WebSocketService} recieved a serialized message
      * it will try send it if the socket is open. Otherwise the message will be queued and process
      * when the connection will be open.
      *
@@ -68,13 +69,13 @@ public interface IWebSocketService {
 
     /**
      * Disconnect the socket and reset the {@link ca.teyssedre.wsservice.enums.SocketState} of the
-     * {@link ca.teyssedre.wsservice.WebSocketService}.
+     * {@link WebSocketService}.
      */
     void Disconnect();
 
     /**
      * When a {@code listener} doesn't want to receive notification it can be remove from the
-     * {@link ca.teyssedre.wsservice.WebSocketService} listeners list.
+     * {@link WebSocketService} listeners list.
      *
      * @param listener {@link ISocketListener} instance to remove.
      */
@@ -83,14 +84,14 @@ public interface IWebSocketService {
 
     /**
      * In order to diagnose {@link ca.teyssedre.wsservice.enums.SocketState#FAILED} or {@link ca.teyssedre.wsservice.enums.SocketState#ERROR}
-     * the {@link ca.teyssedre.wsservice.WebSocketService} expose an exception property.
+     * the {@link WebSocketService} expose an exception property.
      *
      * @return {@link Exception} catch if one has been rise by the socket.
      */
     Exception getException();
 
     /**
-     * Getter of the {@link SocketState} of the {@link ca.teyssedre.wsservice.WebSocketService}.
+     * Getter of the {@link SocketState} of the {@link WebSocketService}.
      *
      * @return {@link SocketState} current value.
      */

@@ -75,6 +75,12 @@ public class KeyStoreDataSource extends BaseDataSource {
     public KeyStoreDataSource(Context context) {
         dbHelper = CryptoStorageHelper.getInstance(context);
         dbHelper.RegisterDataSource(this);
+        try {
+            open();
+            close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public void open() throws SQLException {
@@ -149,9 +155,12 @@ public class KeyStoreDataSource extends BaseDataSource {
             ks.setDescription(cursor.getString(2));
             ks.setCreated(iso8601Format.parse(cursor.getString(3)));
             ks.setModified(iso8601Format.parse(cursor.getString(4)));
-            ks.setPrivateKey(Crypto.StringToPrivateKey(cursor.getString(5).replaceAll("'", "")));
-            ks.setPublicKey(Crypto.StringToPublicKey(cursor.getString(6).replaceAll("'", "")));
-            ks.setSecretKey(Crypto.StringToSecretKey(cursor.getString(7).replaceAll("'", "")));
+            if (cursor.getString(5) != null)
+                ks.setPrivateKey(Crypto.StringToPrivateKey(cursor.getString(5).replaceAll("'", "")));
+            if (cursor.getString(6) != null)
+                ks.setPublicKey(Crypto.StringToPublicKey(cursor.getString(6).replaceAll("'", "")));
+            if (cursor.getString(7) != null)
+                ks.setSecretKey(Crypto.StringToAESKey(cursor.getString(7).replaceAll("'", "")));
             cursor.moveToNext();
         } catch (GeneralSecurityException | ParseException e) {
             e.printStackTrace();
