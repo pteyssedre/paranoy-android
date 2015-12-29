@@ -108,8 +108,9 @@ public class SocketClient implements ISocketListener {
                     case FAILED:
                         Exception exception = getException();
                         if (exception != null) {
-                            Log.e(TAG, exception.getMessage());
-                            Snack(exception.getMessage(), 4000);
+                            String str = exception.getMessage() != null ? exception.getMessage() : "Fail to connect ...";
+                            Log.e(TAG, str);
+                            Snack(str, 4000);
                         } else {
                             Snack("Fail to connect ...", 4000);
                         }
@@ -155,8 +156,8 @@ public class SocketClient implements ISocketListener {
                 @Override
                 public void run() {
                     if (socket.getSocketState() == SocketState.INITIALIZE && !_connectCalled) {
-//                        socket.SecureConnect("teyssedre.ca", 4445);
-                        socket.Connect("10.5.2.14", 4445);
+                        socket.SecureConnect("teyssedre.ca", 4445);
+//                        socket.Connect("10.5.2.14", 4445);
                         _connectCalled = true;
                     }
                 }

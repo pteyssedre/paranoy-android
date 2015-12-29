@@ -31,14 +31,11 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-import org.bouncycastle.asn1.ASN1Primitive;
-import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -46,10 +43,6 @@ import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SignatureException;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 
 import ca.teyssedre.crypto.Crypto;
 import ca.teyssedre.paranoya.messaging.SocketMessage;
@@ -81,7 +74,7 @@ public class PMessageLogic {
                     msg = mapper.readValue(message, new TypeReference<SocketMessage<KeyMessage>>() {
                     });
                     if (msg.getData() != null) {
-                        if(msg.getData().isSystem()){
+                        if (msg.getData().isSystem()) {
                             try {
                                 serverKey = Crypto.StringToPublicKey(msg.getData().getKey().getPublicKey());
                                 Log.d(TAG, "Server key found ");
@@ -91,7 +84,7 @@ public class PMessageLogic {
                             }
                         } else {
                             //TODO: New user/contact key exchange.
-                            if(msg.getOrigin() == null || msg.getOrigin().length() == 0){
+                            if (msg.getOrigin() == null || msg.getOrigin().length() == 0) {
                                 // invalid information on user ... no id found
                                 return;
                             }
@@ -105,7 +98,7 @@ public class PMessageLogic {
                 break;
             case OnlineStatus:
                 SocketMessage<User> parsed = SocketMessage.parse(message);
-                Log.d(TAG, "New user status "+ parsed.getData());
+                Log.d(TAG, "New user status " + parsed.getData());
                 break;
 
             case KeyValidation:
@@ -123,7 +116,7 @@ public class PMessageLogic {
     private void validateDataWithKey(String message, PublicKey serverKey) {
         try {
             JSONObject parsed = new JSONObject(message);
-            if(parsed.has("data") && parsed.has("signature")){
+            if (parsed.has("data") && parsed.has("signature")) {
                 String data = parsed.getJSONObject("data").toString();
                 String signature = parsed.getString("signature");
 

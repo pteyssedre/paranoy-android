@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.1"
+    buildToolsVersion "23.0.2"
 
     defaultConfig {
         applicationId "ca.teyssedre.paranoya"
@@ -25,8 +25,7 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    testCompile 'junit:junit:4.12'
-    compile 'org.bouncycastle:bcprov-jdk15on:1.53'
+//    compile 'org.bouncycastle:bcprov-jdk15on:1.53'
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:cardview-v7:23.1.1'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.6.1'
@@ -34,4 +33,5 @@ dependencies {
     compile project(':crypto')
     compile project(':wservice')
     compile project(':webrtc')
+    testCompile 'junit:junit:4.12'
 }
