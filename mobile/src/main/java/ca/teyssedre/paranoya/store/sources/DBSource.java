@@ -24,8 +24,6 @@
 
 package ca.teyssedre.paranoya.store.sources;
 
-import ca.teyssedre.paranoya.messaging.data.Relation;
-
 abstract class DBSource implements IDBSource {
 
     public abstract String dbName();

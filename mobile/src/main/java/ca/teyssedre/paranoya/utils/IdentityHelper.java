@@ -41,6 +41,7 @@ public class IdentityHelper {
 
     User currentUser;
     List<User> Contacts;
+    KeySet userIdentityKeySet;
 
     public IdentityHelper(Crypto crypto, ParanoyaUserSource userSource) {
         this.crypto = crypto;
@@ -72,14 +73,15 @@ public class IdentityHelper {
     }
 
     public KeySet getIdentityKey() {
-        if (getCurrentUser() != null) {
-            List<Long> ids = userSource.getKeysByUserId(getCurrentUser().getId());
-            if (ids.size() > 0) {
-                long keyId = ids.get(0);
-                return crypto.GetStoredKey(keyId);
+        if (userIdentityKeySet == null) {
+            if (getCurrentUser() != null) {
+                List<Long> ids = userSource.getKeysByUserId(getCurrentUser().getId());
+                if (ids.size() > 0) {
+                    long keyId = ids.get(0);
+                    userIdentityKeySet = crypto.GetStoredKey(keyId);
+                }
             }
         }
-        return null;
+        return userIdentityKeySet;
     }
-
 }

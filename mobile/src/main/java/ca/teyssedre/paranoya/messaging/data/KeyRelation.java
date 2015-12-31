@@ -26,7 +26,7 @@ package ca.teyssedre.paranoya.messaging.data;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Relation implements Parcelable {
+public class KeyRelation implements Parcelable {
 
     private long Id = -1;
     private long UserId = -1;
@@ -34,10 +34,10 @@ public class Relation implements Parcelable {
     private int Type = 0;
     private String description = "";
 
-    public Relation() {
+    public KeyRelation() {
     }
 
-    public Relation(long id, long userId, long keyId, int type, String description) {
+    public KeyRelation(long id, long userId, long keyId, int type, String description) {
         Id = id;
         UserId = userId;
         KeyId = keyId;
@@ -45,7 +45,7 @@ public class Relation implements Parcelable {
         this.description = description;
     }
 
-    protected Relation(Parcel in) {
+    protected KeyRelation(Parcel in) {
         Id = in.readLong();
         UserId = in.readLong();
         KeyId = in.readLong();
@@ -53,15 +53,15 @@ public class Relation implements Parcelable {
         description = in.readString();
     }
 
-    public static final Creator<Relation> CREATOR = new Creator<Relation>() {
+    public static final Creator<KeyRelation> CREATOR = new Creator<KeyRelation>() {
         @Override
-        public Relation createFromParcel(Parcel in) {
-            return new Relation(in);
+        public KeyRelation createFromParcel(Parcel in) {
+            return new KeyRelation(in);
         }
 
         @Override
-        public Relation[] newArray(int size) {
-            return new Relation[size];
+        public KeyRelation[] newArray(int size) {
+            return new KeyRelation[size];
         }
     };
 

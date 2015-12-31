@@ -35,7 +35,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import ca.teyssedre.paranoya.messaging.data.Relation;
+import ca.teyssedre.paranoya.messaging.data.KeyRelation;
 import ca.teyssedre.paranoya.messaging.data.User;
 import ca.teyssedre.paranoya.store.ParanoyaDBHelper;
 
@@ -172,13 +172,13 @@ public class ParanoyaUserSource extends DBSource {
         return user;
     }
 
-    private Relation cursorToRelation(Cursor cursor) {
+    private KeyRelation cursorToRelation(Cursor cursor) {
         if (cursor == null || cursor.isNull(0)) {
             return null;
         }
-        Relation relation = null;
+        KeyRelation keyRelation = null;
         try {
-            relation = new Relation(cursor.getInt(0),
+            keyRelation = new KeyRelation(cursor.getInt(0),
                     cursor.getInt(1),
                     cursor.getInt(2),
                     cursor.getInt(3),
@@ -186,7 +186,7 @@ public class ParanoyaUserSource extends DBSource {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return relation;
+        return keyRelation;
     }
     //</editor-fold>
 
@@ -215,7 +215,8 @@ public class ParanoyaUserSource extends DBSource {
     }
 
     /**
-     * @param userId
+     * This method may not need to be public ... maybe it could be use internally only.
+     * @param userId {@link Long} unique Id of the user. (Source Paranoya-Android)
      * @return
      */
     public List<Long> getKeysByUserId(long userId) {
@@ -225,8 +226,8 @@ public class ParanoyaUserSource extends DBSource {
             Cursor cursor = database.query(RELATION_KEY_TABLE_NAME, ALL_RELATION_COLUMNS, USER_ID + " = " + userId, null, null, null, null);
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
-                Relation relation = cursorToRelation(cursor);
-                ids.add(relation.getKeyId());
+                KeyRelation keyRelation = cursorToRelation(cursor);
+                ids.add(keyRelation.getKeyId());
                 cursor.moveToNext();
             }
             cursor.close();
@@ -265,20 +266,20 @@ public class ParanoyaUserSource extends DBSource {
     }
 
     /**
-     * Accessor to get all the {@link Relation} instance in the database.
+     * Accessor to get all the {@link KeyRelation} instance in the database.
      *
-     * @return a {@link List} of {@link Relation} instances. If a error happen the list will be empty.
+     * @return a {@link List} of {@link KeyRelation} instances. If a error happen the list will be empty.
      */
-    public List<Relation> getAllRelations() {
-        List<Relation> relations = new ArrayList<>();
+    public List<KeyRelation> getAllRelations() {
+        List<KeyRelation> keyRelations = new ArrayList<>();
         try {
             open();
             Cursor cursor = database.query(RELATION_KEY_TABLE_NAME, ALL_RELATION_COLUMNS, null, null, null, null, null);
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
-                Relation relation = cursorToRelation(cursor);
-                if (relation != null) {
-                    relations.add(relation);
+                KeyRelation keyRelation = cursorToRelation(cursor);
+                if (keyRelation != null) {
+                    keyRelations.add(keyRelation);
                 }
                 cursor.moveToNext();
             }
@@ -287,7 +288,7 @@ public class ParanoyaUserSource extends DBSource {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return relations;
+        return keyRelations;
     }
 
     /**
@@ -422,27 +423,27 @@ public class ParanoyaUserSource extends DBSource {
     }
 
     /**
-     * @param relation
+     * @param keyRelation
      * @return
      */
-    public Relation addRelation(Relation relation) {
-        if (relation == null) {
+    public KeyRelation addRelation(KeyRelation keyRelation) {
+        if (keyRelation == null) {
             return null;
         }
         try {
             open();
             ContentValues values = new ContentValues();
-            values.put(USER_ID, relation.getUserId());
-            values.put(RELATION_KEY_LINK, relation.getKeyId());
-            values.put(RELATION_TYPE, relation.getType());
-            values.put(RELATION_DESCRIPTION, relation.getDescription());
+            values.put(USER_ID, keyRelation.getUserId());
+            values.put(RELATION_KEY_LINK, keyRelation.getKeyId());
+            values.put(RELATION_TYPE, keyRelation.getType());
+            values.put(RELATION_DESCRIPTION, keyRelation.getDescription());
             long insertId = database.insert(RELATION_KEY_TABLE_NAME, null, values);
-            relation.setId(insertId);
+            keyRelation.setId(insertId);
             close();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return relation;
+        return keyRelation;
     }
 
     //</editor-fold>

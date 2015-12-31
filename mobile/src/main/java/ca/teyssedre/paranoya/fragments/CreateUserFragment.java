@@ -43,7 +43,7 @@ import ca.teyssedre.crypto.ICryptoCallback;
 import ca.teyssedre.crypto.store.models.KeySet;
 import ca.teyssedre.paranoya.ParanoyaActivity;
 import ca.teyssedre.paranoya.R;
-import ca.teyssedre.paranoya.messaging.data.Relation;
+import ca.teyssedre.paranoya.messaging.data.KeyRelation;
 import ca.teyssedre.paranoya.messaging.data.User;
 import ca.teyssedre.paranoya.store.sources.ParanoyaUserSource;
 
@@ -110,11 +110,11 @@ public class CreateUserFragment extends ParanoyaFragment {
                                 u.setType(1);
                                 u = instance.addUser(u);
 
-                                Relation relationKey = new Relation();
-                                relationKey.setUserId(u.getId());
-                                relationKey.setKeyId(data.getId());
-                                relationKey.setType(1);
-                                instance.addRelation(relationKey);
+                                KeyRelation keyRelationKey = new KeyRelation();
+                                keyRelationKey.setUserId(u.getId());
+                                keyRelationKey.setKeyId(data.getId());
+                                keyRelationKey.setType(1);
+                                instance.addRelation(keyRelationKey);
 
                                 ((ParanoyaActivity) getActivity()).OnIdentityCreated();
                             } catch (GeneralSecurityException e) {
