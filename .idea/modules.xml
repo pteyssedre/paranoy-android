@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/crypto/crypto.iml" filepath="$PROJECT_DIR$/crypto/crypto.iml" />
+      <module fileurl="file://$PROJECT_DIR$/mobile/mobile.iml" filepath="$PROJECT_DIR$/mobile/mobile.iml" />
+      <module fileurl="file://$PROJECT_DIR$/paranoya-android.iml" filepath="$PROJECT_DIR$/paranoya-android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/wear/wear.iml" filepath="$PROJECT_DIR$/wear/wear.iml" />
+      <module fileurl="file://$PROJECT_DIR$/webrtc/webrtc.iml" filepath="$PROJECT_DIR$/webrtc/webrtc.iml" />
+      <module fileurl="file://$PROJECT_DIR$/wservice/wservice.iml" filepath="$PROJECT_DIR$/wservice/wservice.iml" />
+    </modules>
+  </component>
+</project>

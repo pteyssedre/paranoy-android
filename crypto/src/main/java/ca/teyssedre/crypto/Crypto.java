@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Pierre Teyssedre
+ * Copyright (c) 2015. Pierre Teyssedre
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -515,20 +515,18 @@ public class Crypto {
         background.execute(new Runnable() {
             @Override
             public void run() {
-                KeyPair stringKeyMap = null;
+                KeyPair keyPair = null;
                 try {
-                    stringKeyMap = GenerateRSAPair(min);
-                } catch (NoSuchAlgorithmException e) {
-                    e.printStackTrace();
-                } catch (NoSuchProviderException e) {
+                    keyPair = GenerateRSAPair(min);
+                } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
                     e.printStackTrace();
                 }
                 if (callback != null) {
-                    final KeyPair finalStringKeyMap = stringKeyMap;
+                    final KeyPair finalKeyPair = keyPair;
                     uiThread.post(new Runnable() {
                         @Override
                         public void run() {
-                            callback.OnComplete(finalStringKeyMap);
+                            callback.OnComplete(finalKeyPair);
                         }
                     });
                 }
@@ -616,6 +614,10 @@ public class Crypto {
                 }
             }
         });
+    }
+
+    public KeySet GetStoredKey(long keyId) {
+        return keyStorage.GetKeySetForId(keyId);
     }
 
     /**
@@ -737,6 +739,7 @@ public class Crypto {
     public void UpdateActivity(Activity activity) {
         this.uiHelper = UIHelper.getInstance(activity);
     }
+
     //endregion
 
 

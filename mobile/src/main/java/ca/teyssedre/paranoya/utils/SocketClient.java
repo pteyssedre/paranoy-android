@@ -2,6 +2,7 @@
  * The MIT License (MIT)
  *
  * Copyright (c) 2015. Pierre Teyssedre
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
@@ -38,6 +39,7 @@ import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import ca.teyssedre.crypto.store.models.CryptoInfo;
 import ca.teyssedre.crypto.views.UIHelper;
 import ca.teyssedre.paranoya.messaging.SocketMessage;
 import ca.teyssedre.paranoya.messaging.enums.SocketMessageType;
@@ -52,7 +54,7 @@ public class SocketClient implements ISocketListener {
 
     private final Handler uiThread;
     private final ThreadPoolExecutor background;
-    private final IdentityHelper idHelper;
+    private final CryptoInfo cryptoInfo;
     private IParanoyaMessageListener listner;
 
     //region Properties
@@ -63,6 +65,7 @@ public class SocketClient implements ISocketListener {
     private boolean _connectCalled = false;
     private PublicKey serverKey;
     private PMessageLogic PMLogic;
+    private IdentityHelper idHelper;
     //endregion
 
     //region Constructor
@@ -76,7 +79,7 @@ public class SocketClient implements ISocketListener {
         LinkedBlockingDeque<Runnable> queue = new LinkedBlockingDeque<>();
         this.background = new ThreadPoolExecutor(1, i, 1, TimeUnit.SECONDS, queue);
         this.PMLogic = new PMessageLogic();
-        this.idHelper = new IdentityHelper();
+        this.cryptoInfo = new CryptoInfo();
     }
     //endregion
 
@@ -156,7 +159,6 @@ public class SocketClient implements ISocketListener {
                 public void run() {
                     if (socket.getSocketState() == SocketState.INITIALIZE && !_connectCalled) {
                         socket.SecureConnect("teyssedre.ca", 4445);
-//                        socket.Connect("10.5.2.14", 4445);
                         _connectCalled = true;
                     }
                 }
@@ -336,5 +338,9 @@ public class SocketClient implements ISocketListener {
 
     public void UpdateActivity(Activity activity) {
         this.context = activity;
+    }
+
+    public void setIdHelper(IdentityHelper idHelper) {
+        this.idHelper = idHelper;
     }
 }

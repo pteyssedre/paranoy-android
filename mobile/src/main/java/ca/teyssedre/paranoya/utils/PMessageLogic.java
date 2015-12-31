@@ -151,4 +151,8 @@ public class PMessageLogic {
             e.printStackTrace();
         }
     }
+
+    public void setCurrentUserKey(PrivateKey currentUserKey) {
+        this.currentUserKey = currentUserKey;
+    }
 }

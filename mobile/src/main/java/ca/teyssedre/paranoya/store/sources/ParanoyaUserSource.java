@@ -1,18 +1,18 @@
-/**
+/*
  * The MIT License (MIT)
- * <p/>
- * Copyright (c) 2015 Pierre Teyssedre
- * <p/>
+ *
+ * Copyright (c) 2015. Pierre Teyssedre
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * <p/>
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * <p/>
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -89,10 +89,9 @@ public class ParanoyaUserSource extends DBSource {
 
     private ParanoyaUserSource(Context context) {
         dbHelper = new ParanoyaDBHelper(context, USERS_STORE_DB_NAME, 1, this);
-//        lockUsers = new Object();
     }
 
-    public void initialization(){
+    public void initialization() {
         try {
             open();
             close();
@@ -104,6 +103,7 @@ public class ParanoyaUserSource extends DBSource {
     public static ParanoyaUserSource getInstance(Context context) {
         if (instance == null) {
             instance = new ParanoyaUserSource(context);
+            instance.initialization();
         }
         return instance;
     }
@@ -192,12 +192,15 @@ public class ParanoyaUserSource extends DBSource {
 
     //<editor-fold desc="Public Methods">
 
-    public void getContactsList() {
+    /**
+     * @param userId {@link Long} unique identifier of the user.
+     */
+    public void getContactsList(long userId) {
         try {
             open();
             String query = "SELECT * FROM " + USERS_TABLE_NAME + " u INNER JOIN " + RELATION_KEY_TABLE_NAME + " r " +
-                    "ON u." + USER_ID + "=" + "r." + USER_ID + " WHERE u." + USER_TYPE + " !=?";
-            Cursor cursor = database.rawQuery(query, new String[]{String.valueOf(1)});
+                    "ON u." + USER_ID + "=" + "r." + USER_ID + " WHERE u." + USER_TYPE + " !=? AND u." + USER_ID + " !=?";
+            Cursor cursor = database.rawQuery(query, new String[]{String.valueOf(1), String.valueOf(userId)});
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
                 System.out.println(cursor);
@@ -209,6 +212,29 @@ public class ParanoyaUserSource extends DBSource {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    /**
+     * @param userId
+     * @return
+     */
+    public List<Long> getKeysByUserId(long userId) {
+        List<Long> ids = null;
+        try {
+            open();
+            Cursor cursor = database.query(RELATION_KEY_TABLE_NAME, ALL_RELATION_COLUMNS, USER_ID + " = " + userId, null, null, null, null);
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                System.out.println(cursor);
+                cursor.moveToNext();
+            }
+            cursor.close();
+            close();
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return ids;
     }
 
     /**

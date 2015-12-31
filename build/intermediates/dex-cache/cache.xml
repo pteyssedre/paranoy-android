@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="/Users/buildmac/Bitbucket/paranoya-android/mobile/build/intermediates/exploded-aar/paranoya-android/crypto/unspecified/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="12b252bfe08404e96a1dd5b39172ffca2d7b5f36">
+        <dex dex="/Users/buildmac/Bitbucket/paranoya-android/mobile/build/intermediates/pre-dexed/debug/classes-7c9c788d7ef989bf78ec2ba6af602c12b9a984eb.jar" />
+    </item>
+
+</items>

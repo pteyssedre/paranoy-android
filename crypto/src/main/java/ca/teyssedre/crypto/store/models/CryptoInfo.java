@@ -33,11 +33,11 @@ import ca.teyssedre.crypto.Crypto;
 public class CryptoInfo {
 
     private Map<String, Set<String>> info;
-    private Map<String, Map<String, Set<String>>> tryme;
+    private Map<String, Map<String, Set<String>>> completeInfo;
 
     public CryptoInfo() {
         info = new HashMap<>();
-        tryme = new HashMap<>();
+        completeInfo = new HashMap<>();
         Set<String> providersNames = Crypto.GetProvidersNames();
         for (String name : providersNames) {
             Set<String> serviceTypes = Crypto.GetServiceTypes(name);
@@ -47,7 +47,7 @@ public class CryptoInfo {
                 Set<String> algorithms = Crypto.GetAlgorithms(name, service);
                 innerMap.put(service, algorithms);
             }
-            tryme.put(name, innerMap);
+            completeInfo.put(name, innerMap);
         }
     }
 
@@ -76,7 +76,7 @@ public class CryptoInfo {
         return matches;
     }
 
-    public Map<String, Map<String, Set<String>>> getTryme() {
-        return tryme;
+    public Map<String, Map<String, Set<String>>> getCompleteInfo() {
+        return completeInfo;
     }
 }
