@@ -37,7 +37,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import java.security.GeneralSecurityException;
-import java.security.PublicKey;
 
 import ca.teyssedre.crypto.Crypto;
 import ca.teyssedre.crypto.ICryptoCallback;
@@ -97,7 +96,7 @@ public class CreateUserFragment extends ParanoyaFragment {
                 s.setTitle(pseudo.getText().toString() + "'s identity");
                 s.setDescription(message.getText().toString());
                 s.setLength(2048);
-                Crypto.getInstance(getActivity()).PushRSAKeyAsync(s, new ICryptoCallback<KeySet>() {
+                Crypto.getInstance().PushRSAKeyAsync(s, new ICryptoCallback<KeySet>() {
                     @Override
                     public void OnComplete(KeySet data) {
                         if (data != null) {

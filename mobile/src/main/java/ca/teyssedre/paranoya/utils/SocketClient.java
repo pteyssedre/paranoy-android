@@ -107,10 +107,9 @@ public class SocketClient implements ISocketListener {
                         break;
                     case FAILED:
                         Exception exception = getException();
-                        if (exception != null) {
-                            String str = exception.getMessage() != null ? exception.getMessage() : "Fail to connect ...";
-                            Log.e(TAG, str);
-                            Snack(str, 4000);
+                        if (exception != null && exception.getMessage() != null) {
+                            Log.e(TAG, exception.getMessage());
+                            Snack(exception.getMessage(), 4000);
                         } else {
                             Snack("Fail to connect ...", 4000);
                         }

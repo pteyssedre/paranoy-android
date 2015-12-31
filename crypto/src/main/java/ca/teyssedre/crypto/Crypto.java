@@ -1,18 +1,18 @@
-/**
+/*
  * The MIT License (MIT)
- * <p>
+ *
  * Copyright (c) 2015 Pierre Teyssedre
- * <p>
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * <p>
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * <p>
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -116,9 +116,11 @@ public class Crypto {
         if (context == null) {
             throw new CryptoException("No Context has been pass to Crypto library");
         }
-        if (instance == null || instance.context != context) {
-            instance = null;
+        if (instance == null) {
             instance = new Crypto(context);
+        }
+        if (instance.context != context) {
+            instance.context = context;
         }
         return instance;
     }
@@ -648,8 +650,8 @@ public class Crypto {
     /**
      * Generate a RSA Pair key given the instance {@code key}, on complete the pair is added to the {@code keyStorage}.
      *
-     * @param key      {@link KeySet} instance to save in the db
-     * @param callback
+     * @param key      {@link KeySet} instance to save in the db.
+     * @param callback {@link ICryptoCallback<Boolean>} callback methods.
      */
     public void AddRSAKeyAsync(final KeySet key, final ICryptoCallback<Boolean> callback) {
         GenerateRSAPairAsync(key.getLength(), new ICryptoCallback<KeyPair>() {
@@ -666,6 +668,10 @@ public class Crypto {
         });
     }
 
+    /**
+     * @param key      {@link KeySet} instance to push inside the database.
+     * @param callback {@link ICryptoCallback<KeySet>} callback methods.
+     */
     public void PushRSAKeyAsync(final KeySet key, final ICryptoCallback<KeySet> callback) {
         GenerateRSAPairAsync(key.getLength(), new ICryptoCallback<KeyPair>() {
             @Override
@@ -691,7 +697,7 @@ public class Crypto {
      *             {@link UIHelper}.
      */
     private void ShowProgress(String text) {
-        if (uiHelper != null && instance.dialogNotification) {
+        if (uiHelper != null && dialogNotification) {
             uiHelper.showProgressDialog(text);
         }
     }
@@ -705,6 +711,10 @@ public class Crypto {
         }
     }
 
+    /**
+     * @param itemId   {@link Long} unique id of the {@link KeySet} to delete.
+     * @param callback {@link ICryptoCallback<Boolean>} callback methods.
+     */
     public void DeleteKeyAsync(final long itemId, final ICryptoCallback<Boolean> callback) {
         background.execute(new Runnable() {
             @Override
