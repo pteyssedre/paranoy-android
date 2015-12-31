@@ -46,13 +46,14 @@ public class ParanoyaUserSource extends DBSource {
 
     //<editor-fold desc="USER TABLE">
     private static final String USERS_TABLE_NAME = "paranoyaUser";
-    private static final String USER_ID = "id";
+    private static final String USER_ID = "userId";
     private static final String USER_HASH = "hashKey";
     private static final String USER_AVATAR = "avatar";
     private static final String USER_PSEUDO = "pseudo";
     private static final String USER_DESCRIPTION = "description";
     private static final String USER_TYPE = "type";
-    private static final String[] ALL_USER_COLUMNS = {USER_ID, USER_HASH, USER_AVATAR, USER_PSEUDO, USER_DESCRIPTION, USER_TYPE};
+    private static final String USER_RELAY = "relayTo";
+    private static final String[] ALL_USER_COLUMNS = {USER_ID, USER_HASH, USER_AVATAR, USER_PSEUDO, USER_DESCRIPTION, USER_TYPE, USER_RELAY};
 
     private static final String CREATE_USER_TABLE = "CREATE TABLE "
             + USERS_TABLE_NAME + " (" + USER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -60,7 +61,8 @@ public class ParanoyaUserSource extends DBSource {
             + USER_AVATAR + " TEXT, "
             + USER_PSEUDO + " TEXT, "
             + USER_DESCRIPTION + " TEXT, "
-            + USER_TYPE + " INTEGER "
+            + USER_TYPE + " INTEGER, "
+            + USER_RELAY + " INTEGER "
             + ");";
     //</editor-fold>
 
@@ -154,6 +156,27 @@ public class ParanoyaUserSource extends DBSource {
         dbHelper.close();
     }
 
+    //<editor-fold desc="Converters">
+    private ContentValues keyRelationToContentValues(KeyRelation keyRelation) {
+        ContentValues values = new ContentValues();
+        values.put(USER_ID, keyRelation.getUserId());
+        values.put(RELATION_KEY_LINK, keyRelation.getKeyId());
+        values.put(RELATION_DESCRIPTION, keyRelation.getDescription());
+        values.put(RELATION_TYPE, keyRelation.getType());
+        return values;
+    }
+
+    private ContentValues userToContentValues(User user) {
+        ContentValues values = new ContentValues();
+        values.put(USER_HASH, DatabaseUtils.sqlEscapeString(user.getHash()));
+        values.put(USER_AVATAR, user.getAvatarUrl());
+        values.put(USER_PSEUDO, user.getPseudo());
+        values.put(USER_DESCRIPTION, user.getMessage());
+        values.put(USER_TYPE, user.getType());
+        values.put(USER_RELAY, user.getRelayId());
+        return values;
+    }
+
     private User cursorToUser(Cursor cursor) {
         if (cursor == null || cursor.isNull(0)) {
             return null;
@@ -165,14 +188,15 @@ public class ParanoyaUserSource extends DBSource {
                     cursor.getString(2),
                     cursor.getString(3),
                     cursor.getString(4),
-                    cursor.getInt(5));
+                    cursor.getInt(5),
+                    cursor.getLong(6));
         } catch (Exception e) {
             e.printStackTrace();
         }
         return user;
     }
 
-    private KeyRelation cursorToRelation(Cursor cursor) {
+    private KeyRelation cursorToKeyRelation(Cursor cursor) {
         if (cursor == null || cursor.isNull(0)) {
             return null;
         }
@@ -188,6 +212,8 @@ public class ParanoyaUserSource extends DBSource {
         }
         return keyRelation;
     }
+    //</editor-fold>
+
     //</editor-fold>
 
     //<editor-fold desc="Public Methods">
@@ -216,6 +242,7 @@ public class ParanoyaUserSource extends DBSource {
 
     /**
      * This method may not need to be public ... maybe it could be use internally only.
+     *
      * @param userId {@link Long} unique Id of the user. (Source Paranoya-Android)
      * @return
      */
@@ -226,7 +253,7 @@ public class ParanoyaUserSource extends DBSource {
             Cursor cursor = database.query(RELATION_KEY_TABLE_NAME, ALL_RELATION_COLUMNS, USER_ID + " = " + userId, null, null, null, null);
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
-                KeyRelation keyRelation = cursorToRelation(cursor);
+                KeyRelation keyRelation = cursorToKeyRelation(cursor);
                 ids.add(keyRelation.getKeyId());
                 cursor.moveToNext();
             }
@@ -277,7 +304,35 @@ public class ParanoyaUserSource extends DBSource {
             Cursor cursor = database.query(RELATION_KEY_TABLE_NAME, ALL_RELATION_COLUMNS, null, null, null, null, null);
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
-                KeyRelation keyRelation = cursorToRelation(cursor);
+                KeyRelation keyRelation = cursorToKeyRelation(cursor);
+                if (keyRelation != null) {
+                    keyRelations.add(keyRelation);
+                }
+                cursor.moveToNext();
+            }
+            cursor.close();
+            close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return keyRelations;
+    }
+
+    /**
+     * Accessor to get all the {@link KeyRelation} instance in the database relay to a specific {@link User}
+     * base on the {@code userId} parameter.
+     *
+     * @param userId {@link Long} unique identifier from {@link ParanoyaUserSource}.
+     * @return a {@link List} of {@link KeyRelation} instances. If a error happen the list will be empty.
+     */
+    public List<KeyRelation> getAllKeyRelationByUserId(long userId) {
+        List<KeyRelation> keyRelations = new ArrayList<>();
+        try {
+            open();
+            Cursor cursor = database.query(RELATION_KEY_TABLE_NAME, ALL_RELATION_COLUMNS, USER_ID + " = " + userId, null, null, null, null);
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                KeyRelation keyRelation = cursorToKeyRelation(cursor);
                 if (keyRelation != null) {
                     keyRelations.add(keyRelation);
                 }
@@ -304,19 +359,13 @@ public class ParanoyaUserSource extends DBSource {
             if (user.getHash() != null && user.getHash().length() > 0) {
                 User u = getUserByHash(user.getHash());
                 if (u != null) {
-                    Log.d(TAG, "User already exist");
+                    Log.e(TAG, "User already exist");
                     return user;
                 }
             }
             try {
                 open();
-                ContentValues values = new ContentValues();
-                values.put(USER_HASH, DatabaseUtils.sqlEscapeString(user.getHash()));
-                values.put(USER_AVATAR, user.getAvatarUrl());
-                values.put(USER_PSEUDO, user.getPseudo());
-                values.put(USER_DESCRIPTION, user.getMessage());
-                values.put(USER_TYPE, user.getType());
-                long insertId = database.insert(USERS_TABLE_NAME, null, values);
+                long insertId = database.insert(USERS_TABLE_NAME, null, userToContentValues(user));
                 user.setId(insertId);
                 close();
             } catch (Exception e) {
@@ -432,12 +481,7 @@ public class ParanoyaUserSource extends DBSource {
         }
         try {
             open();
-            ContentValues values = new ContentValues();
-            values.put(USER_ID, keyRelation.getUserId());
-            values.put(RELATION_KEY_LINK, keyRelation.getKeyId());
-            values.put(RELATION_TYPE, keyRelation.getType());
-            values.put(RELATION_DESCRIPTION, keyRelation.getDescription());
-            long insertId = database.insert(RELATION_KEY_TABLE_NAME, null, values);
+            long insertId = database.insert(RELATION_KEY_TABLE_NAME, null, keyRelationToContentValues(keyRelation));
             keyRelation.setId(insertId);
             close();
         } catch (Exception e) {
@@ -445,7 +489,5 @@ public class ParanoyaUserSource extends DBSource {
         }
         return keyRelation;
     }
-
     //</editor-fold>
-
 }

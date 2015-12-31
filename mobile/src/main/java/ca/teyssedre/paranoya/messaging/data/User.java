@@ -1,18 +1,18 @@
 /**
  * The MIT License (MIT)
- * <p>
+ * <p/>
  * Copyright (c) 2015 Pierre Teyssedre
- * <p>
+ * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * <p>
+ * <p/>
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * <p>
+ * <p/>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -35,18 +35,20 @@ public class User implements Parcelable {
     private String Pseudo = "";
     private String Message = "";
     private int Type = -1;
+    private long RelayId;
 
     public User() {
         Id = -1;
     }
 
-    public User(long id, String hash, String avatarUrl, String pseudo, String message, int type) {
+    public User(long id, String hash, String avatarUrl, String pseudo, String message, int type, long relayId) {
         Id = id;
         Hash = hash;
         AvatarUrl = avatarUrl;
         Pseudo = pseudo;
         Message = message;
         Type = type;
+        RelayId = relayId;
     }
 
     protected User(Parcel in) {
@@ -56,6 +58,7 @@ public class User implements Parcelable {
         Pseudo = in.readString();
         Message = in.readString();
         Type = in.readInt();
+        RelayId = in.readLong();
     }
 
     public static final Creator<User> CREATOR = new Creator<User>() {
@@ -145,5 +148,10 @@ public class User implements Parcelable {
         dest.writeString(Pseudo);
         dest.writeString(Message);
         dest.writeInt(Type);
+        dest.writeLong(RelayId);
+    }
+
+    public long getRelayId() {
+        return RelayId;
     }
 }

@@ -10,11 +10,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8f2101f1-5c8f-4f39-8d95-3cb09246b5a7" name="Default" comment="">
-      <change type="MOVED" beforePath="$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/messaging/data/Relation.java" afterPath="$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/messaging/data/KeyRelation.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/fragments/CreateUserFragment.java" afterPath="$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/fragments/CreateUserFragment.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/store/sources/DBSource.java" afterPath="$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/store/sources/DBSource.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/utils/IdentityHelper.java" afterPath="$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/utils/IdentityHelper.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/store/sources/ParanoyaUserSource.java" afterPath="$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/store/sources/ParanoyaUserSource.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/messaging/data/User.java" afterPath="$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/messaging/data/User.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="paranoya-android.iws" />
@@ -90,26 +87,33 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ParanoyaUserSource.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="ParanoyaUserSource.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/store/sources/ParanoyaUserSource.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="428" column="41" selection-start-line="428" selection-start-column="41" selection-end-line="428" selection-end-column="41" />
+            <state vertical-scroll-proportion="1.1398135">
+              <caret line="87" column="0" selection-start-line="87" selection-start-column="0" selection-end-line="87" selection-end-column="0" />
               <folding>
+                <element signature="imports" expanded="true" />
                 <element signature="e#1837#1870#0" expanded="true" />
-                <element signature="e#2798#2835#0" expanded="true" />
-                <element signature="e#3764#3805#0" expanded="true" />
+                <element signature="e#2910#2947#0" expanded="true" />
+                <element signature="e#4823#4824#0" expanded="true" />
+                <element signature="e#4865#4866#0" expanded="true" />
+                <element signature="e#4909#4910#0" expanded="true" />
+                <element signature="e#4933#4934#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="KeyRelation.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/messaging/data/KeyRelation.java">
+      <file leaf-file-name="User.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/messaging/data/User.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.33333334">
-              <caret line="28" column="48" selection-start-line="28" selection-start-column="48" selection-end-line="28" selection-end-column="48" />
-              <folding />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="60" column="31" selection-start-line="60" selection-start-column="31" selection-end-line="60" selection-end-column="31" />
+              <folding>
+                <element signature="e#4144#4145#0" expanded="true" />
+                <element signature="e#4174#4175#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -4396,9 +4400,10 @@
         <option value="$PROJECT_DIR$/crypto/src/main/java/ca/teyssedre/crypto/Crypto.java" />
         <option value="$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/ParanoyaApplication.java" />
         <option value="$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/utils/IdentityHelper.java" />
-        <option value="$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/store/sources/ParanoyaUserSource.java" />
         <option value="$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/messaging/data/Relation.java" />
         <option value="$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/messaging/data/KeyRelation.java" />
+        <option value="$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/messaging/data/User.java" />
+        <option value="$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/store/sources/ParanoyaUserSource.java" />
       </list>
     </option>
   </component>
@@ -5080,7 +5085,13 @@
       <option name="project" value="LOCAL" />
       <updated>1451586176158</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Changing Relation to KeyRelation">
+      <created>1451586534175</created>
+      <option name="number" value="00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1451586534175</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -5094,7 +5105,7 @@
       <window_info id="Android Model" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3287841" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Android Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.45905706" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Android Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.45905706" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.34119105" sideWeight="0.49713877" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
@@ -5135,7 +5146,8 @@
     <MESSAGE value="Fixing copyright header&#10;Fixing update context fo Crypto singleton" />
     <MESSAGE value="Fixing IndexOutOfBoundsException on Key" />
     <MESSAGE value="Fixing List Key id" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixing List Key id" />
+    <MESSAGE value="Changing Relation to KeyRelation" />
+    <option name="LAST_COMMIT_MESSAGE" value="Changing Relation to KeyRelation" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -5577,23 +5589,38 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/store/sources/ParanoyaUserSource.java">
+    <entry file="file://$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/messaging/data/KeyRelation.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.52205884">
+          <caret line="39" column="88" selection-start-line="39" selection-start-column="88" selection-end-line="39" selection-end-column="88" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/messaging/data/User.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="428" column="41" selection-start-line="428" selection-start-column="41" selection-end-line="428" selection-end-column="41" />
+          <caret line="60" column="31" selection-start-line="60" selection-start-column="31" selection-end-line="60" selection-end-column="31" />
           <folding>
-            <element signature="e#1837#1870#0" expanded="true" />
-            <element signature="e#2798#2835#0" expanded="true" />
-            <element signature="e#3764#3805#0" expanded="true" />
+            <element signature="e#4144#4145#0" expanded="true" />
+            <element signature="e#4174#4175#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/messaging/data/KeyRelation.java">
+    <entry file="file://$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/store/sources/ParanoyaUserSource.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.33333334">
-          <caret line="28" column="48" selection-start-line="28" selection-start-column="48" selection-end-line="28" selection-end-column="48" />
-          <folding />
+        <state vertical-scroll-proportion="1.1398135">
+          <caret line="87" column="0" selection-start-line="87" selection-start-column="0" selection-end-line="87" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1837#1870#0" expanded="true" />
+            <element signature="e#2910#2947#0" expanded="true" />
+            <element signature="e#4823#4824#0" expanded="true" />
+            <element signature="e#4865#4866#0" expanded="true" />
+            <element signature="e#4909#4910#0" expanded="true" />
+            <element signature="e#4933#4934#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
