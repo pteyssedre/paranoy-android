@@ -219,13 +219,14 @@ public class ParanoyaUserSource extends DBSource {
      * @return
      */
     public List<Long> getKeysByUserId(long userId) {
-        List<Long> ids = null;
+        List<Long> ids = new ArrayList<>();
         try {
             open();
             Cursor cursor = database.query(RELATION_KEY_TABLE_NAME, ALL_RELATION_COLUMNS, USER_ID + " = " + userId, null, null, null, null);
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
-                System.out.println(cursor);
+                Relation relation = cursorToRelation(cursor);
+                ids.add(relation.getKeyId());
                 cursor.moveToNext();
             }
             cursor.close();
