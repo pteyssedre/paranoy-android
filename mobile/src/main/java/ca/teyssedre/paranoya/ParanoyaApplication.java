@@ -33,7 +33,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import ca.teyssedre.crypto.Crypto;
-import ca.teyssedre.crypto.store.models.KeySet;
 import ca.teyssedre.paranoya.store.sources.ParanoyaUserSource;
 import ca.teyssedre.paranoya.utils.IdentityHelper;
 import ca.teyssedre.paranoya.utils.SocketClient;
@@ -66,7 +65,6 @@ public class ParanoyaApplication extends Application {
     }
 
     public void Connect() {
-        KeySet keys = idHelper.getIdentityKey();
         socketManager.Connect();
     }
 

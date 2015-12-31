@@ -35,16 +35,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SignatureException;
 
 import ca.teyssedre.crypto.Crypto;
+import ca.teyssedre.crypto.store.models.KeySet;
 import ca.teyssedre.paranoya.messaging.SocketMessage;
 import ca.teyssedre.paranoya.messaging.data.KeyMessage;
 import ca.teyssedre.paranoya.messaging.data.User;
@@ -55,8 +54,8 @@ public class PMessageLogic {
     public static final String TAG = "PMessageLogic";
 
     private final ObjectMapper mapper;
-    private PublicKey serverKey;
-    private PrivateKey currentUserKey;
+    private PublicKey serverPublicKey;
+    private KeySet currentUserKeySet;
 
     public PMessageLogic() {
         this.mapper = new ObjectMapper();
@@ -76,9 +75,9 @@ public class PMessageLogic {
                     if (msg.getData() != null) {
                         if (msg.getData().isSystem()) {
                             try {
-                                serverKey = Crypto.StringToPublicKey(msg.getData().getKey().getPublicKey());
+                                serverPublicKey = Crypto.StringToPublicKey(msg.getData().getKey().getPublicKey());
                                 Log.d(TAG, "Server key found ");
-                                validateDataWithKey(message, serverKey);
+                                validateDataWithKey(message, serverPublicKey);
                             } catch (GeneralSecurityException e) {
                                 e.printStackTrace();
                             }
@@ -120,13 +119,13 @@ public class PMessageLogic {
                 String data = parsed.getJSONObject("data").toString();
                 String signature = parsed.getString("signature");
 
-//                byte[] pubBytes = serverKey.getEncoded();
+//                byte[] pubBytes = serverPublicKey.getEncoded();
 //                SubjectPublicKeyInfo spkInfo = SubjectPublicKeyInfo.getInstance(pubBytes);
 //                ASN1Primitive primitive = spkInfo.parsePublicKey();
 //                byte[] publicKeyPKCS1 = primitive.getEncoded();
 
                 boolean isValid = Crypto.ValidateSignatureWithRSA(serverKey, data.getBytes("UTF-8"), signature.getBytes("UTF-8"));
-//                byte[] bytes = Crypto.DecryptWithRSA(serverKey, Crypto.base64Decode(signature));
+//                byte[] bytes = Crypto.DecryptWithRSA(serverPublicKey, Crypto.base64Decode(signature));
 //                String str = new String(bytes, StandardCharsets.UTF_8);
 //                Log.d(TAG, " Trying :" +str);
                 if (!isValid) {
@@ -135,24 +134,12 @@ public class PMessageLogic {
                 }
                 Log.d(TAG, "message validated");
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
-        } catch (SignatureException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (NoSuchProviderException e) {
+        } catch (JSONException | IOException | NoSuchProviderException | NoSuchAlgorithmException | InvalidKeyException | SignatureException e) {
             e.printStackTrace();
         }
     }
 
-    public void setCurrentUserKey(PrivateKey currentUserKey) {
-        this.currentUserKey = currentUserKey;
+    public void setCurrentUserKeySet(KeySet currentUserKeySet) {
+        this.currentUserKeySet = currentUserKeySet;
     }
 }

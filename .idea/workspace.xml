@@ -9,9 +9,12 @@
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8f2101f1-5c8f-4f39-8d95-3cb09246b5a7" name="Default" comment="">
+    <list default="true" id="8f2101f1-5c8f-4f39-8d95-3cb09246b5a7" name="Default" comment="F">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/utils/IdentityHelper.java" afterPath="$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/utils/IdentityHelper.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/utils/PMessageLogic.java" afterPath="$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/utils/PMessageLogic.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/ParanoyaApplication.java" afterPath="$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/ParanoyaApplication.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/store/sources/ParanoyaUserSource.java" afterPath="$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/store/sources/ParanoyaUserSource.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/messaging/data/User.java" afterPath="$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/messaging/data/User.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/utils/SocketClient.java" afterPath="$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/utils/SocketClient.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="paranoya-android.iws" />
@@ -52,26 +55,27 @@
         <entry file="file://$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/ParanoyaApplication.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="68" column="42" selection-start-line="68" selection-start-column="42" selection-end-line="68" selection-end-column="42" />
-              <folding />
+              <caret line="67" column="24" selection-start-line="67" selection-start-column="24" selection-end-line="67" selection-end-column="24" />
+              <folding>
+                <element signature="imports" expanded="false" />
+                <element signature="e#2604#2605#0" expanded="true" />
+                <element signature="e#2643#2644#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SocketClient.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="SocketClient.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/utils/SocketClient.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="191" column="32" selection-start-line="191" selection-start-column="32" selection-end-line="191" selection-end-column="32" />
+            <state vertical-scroll-proportion="1.1949317">
+              <caret line="346" column="38" selection-start-line="346" selection-start-column="38" selection-end-line="346" selection-end-column="38" />
               <folding>
                 <element signature="e#4812#4830#0" expanded="false" />
-                <element signature="e#5355#5384#0" expanded="false" />
                 <element signature="e#6518#6519#0" expanded="true" />
                 <element signature="e#6567#6568#0" expanded="true" />
                 <element signature="e#6929#6950#0" expanded="false" />
                 <element signature="e#8167#8186#0" expanded="false" />
-                <element signature="e#11658#11659#0" expanded="true" />
-                <element signature="e#11698#11699#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -81,25 +85,21 @@
         <entry file="file://$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/utils/IdentityHelper.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="77" column="49" selection-start-line="77" selection-start-column="49" selection-end-line="77" selection-end-column="49" />
+              <caret line="67" column="44" selection-start-line="67" selection-start-column="22" selection-end-line="67" selection-end-column="44" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ParanoyaUserSource.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="ParanoyaUserSource.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/store/sources/ParanoyaUserSource.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="1.1398135">
-              <caret line="87" column="0" selection-start-line="87" selection-start-column="0" selection-end-line="87" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="240" column="59" selection-start-line="240" selection-start-column="59" selection-end-line="240" selection-end-column="59" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#1837#1870#0" expanded="true" />
                 <element signature="e#2910#2947#0" expanded="true" />
-                <element signature="e#4823#4824#0" expanded="true" />
-                <element signature="e#4865#4866#0" expanded="true" />
-                <element signature="e#4909#4910#0" expanded="true" />
-                <element signature="e#4933#4934#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -139,10 +139,8 @@
         <entry file="file://$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/utils/PMessageLogic.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="56" column="38" selection-start-line="56" selection-start-column="38" selection-end-line="56" selection-end-column="38" />
-              <folding>
-                <element signature="imports" expanded="false" />
-              </folding>
+              <caret line="139" column="5" selection-start-line="139" selection-start-column="5" selection-end-line="139" selection-end-column="5" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -4394,16 +4392,16 @@
         <option value="$PROJECT_DIR$/crypto/src/main/java/ca/teyssedre/crypto/store/db/CryptoStorageHelper.java" />
         <option value="$PROJECT_DIR$/crypto/src/main/java/ca/teyssedre/crypto/store/db/BaseDataSource.java" />
         <option value="$PROJECT_DIR$/crypto/src/main/java/ca/teyssedre/crypto/store/models/CryptoInfo.java" />
-        <option value="$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/utils/PMessageLogic.java" />
-        <option value="$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/utils/SocketClient.java" />
         <option value="$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/ParanoyaActivity.java" />
         <option value="$PROJECT_DIR$/crypto/src/main/java/ca/teyssedre/crypto/Crypto.java" />
-        <option value="$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/ParanoyaApplication.java" />
-        <option value="$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/utils/IdentityHelper.java" />
         <option value="$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/messaging/data/Relation.java" />
         <option value="$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/messaging/data/KeyRelation.java" />
         <option value="$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/messaging/data/User.java" />
         <option value="$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/store/sources/ParanoyaUserSource.java" />
+        <option value="$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/utils/IdentityHelper.java" />
+        <option value="$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/ParanoyaApplication.java" />
+        <option value="$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/utils/SocketClient.java" />
+        <option value="$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/utils/PMessageLogic.java" />
       </list>
     </option>
   </component>
@@ -5091,7 +5089,13 @@
       <option name="project" value="LOCAL" />
       <updated>1451586534175</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Adding RelayTo column for adding contact">
+      <created>1451587524544</created>
+      <option name="number" value="00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1451587524544</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -5104,7 +5108,7 @@
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Android Model" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3287841" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3287841" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Android Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.45905706" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.34119105" sideWeight="0.49713877" order="3" side_tool="false" content_ui="tabs" />
@@ -5147,7 +5151,8 @@
     <MESSAGE value="Fixing IndexOutOfBoundsException on Key" />
     <MESSAGE value="Fixing List Key id" />
     <MESSAGE value="Changing Relation to KeyRelation" />
-    <option name="LAST_COMMIT_MESSAGE" value="Changing Relation to KeyRelation" />
+    <MESSAGE value="Adding RelayTo column for adding contact" />
+    <option name="LAST_COMMIT_MESSAGE" value="Adding RelayTo column for adding contact" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -5207,13 +5212,10 @@
           <caret line="330" column="34" selection-start-line="330" selection-start-column="34" selection-end-line="330" selection-end-column="34" />
           <folding>
             <element signature="e#4812#4830#0" expanded="false" />
-            <element signature="e#5355#5384#0" expanded="false" />
             <element signature="e#6518#6519#0" expanded="true" />
             <element signature="e#6567#6568#0" expanded="true" />
             <element signature="e#6929#6950#0" expanded="false" />
             <element signature="e#8167#8186#0" expanded="false" />
-            <element signature="e#11658#11659#0" expanded="true" />
-            <element signature="e#11698#11699#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -5506,16 +5508,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/utils/PMessageLogic.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="56" column="38" selection-start-line="56" selection-start-column="38" selection-end-line="56" selection-end-column="38" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/crypto/src/main/java/ca/teyssedre/crypto/Crypto.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-64.48148">
@@ -5544,23 +5536,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/utils/SocketClient.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="191" column="32" selection-start-line="191" selection-start-column="32" selection-end-line="191" selection-end-column="32" />
-          <folding>
-            <element signature="e#4812#4830#0" expanded="false" />
-            <element signature="e#5355#5384#0" expanded="false" />
-            <element signature="e#6518#6519#0" expanded="true" />
-            <element signature="e#6567#6568#0" expanded="true" />
-            <element signature="e#6929#6950#0" expanded="false" />
-            <element signature="e#8167#8186#0" expanded="false" />
-            <element signature="e#11658#11659#0" expanded="true" />
-            <element signature="e#11698#11699#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/wservice/src/main/java/ca/teyssedre/wsservice/socket/WSSocket.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.61734694">
@@ -5570,22 +5545,6 @@
             <element signature="e#11403#11404#0" expanded="true" />
             <element signature="e#11435#11436#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/ParanoyaApplication.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="68" column="42" selection-start-line="68" selection-start-column="42" selection-end-line="68" selection-end-column="42" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/utils/IdentityHelper.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="77" column="49" selection-start-line="77" selection-start-column="49" selection-end-line="77" selection-end-column="49" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -5610,16 +5569,54 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/store/sources/ParanoyaUserSource.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="1.1398135">
-          <caret line="87" column="0" selection-start-line="87" selection-start-column="0" selection-end-line="87" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="240" column="59" selection-start-line="240" selection-start-column="59" selection-end-line="240" selection-end-column="59" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#1837#1870#0" expanded="true" />
             <element signature="e#2910#2947#0" expanded="true" />
-            <element signature="e#4823#4824#0" expanded="true" />
-            <element signature="e#4865#4866#0" expanded="true" />
-            <element signature="e#4909#4910#0" expanded="true" />
-            <element signature="e#4933#4934#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/utils/IdentityHelper.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="67" column="44" selection-start-line="67" selection-start-column="22" selection-end-line="67" selection-end-column="44" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/ParanoyaApplication.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="67" column="24" selection-start-line="67" selection-start-column="24" selection-end-line="67" selection-end-column="24" />
+          <folding>
+            <element signature="imports" expanded="false" />
+            <element signature="e#2604#2605#0" expanded="true" />
+            <element signature="e#2643#2644#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/utils/PMessageLogic.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="139" column="5" selection-start-line="139" selection-start-column="5" selection-end-line="139" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mobile/src/main/java/ca/teyssedre/paranoya/utils/SocketClient.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="1.1949317">
+          <caret line="346" column="38" selection-start-line="346" selection-start-column="38" selection-end-line="346" selection-end-column="38" />
+          <folding>
+            <element signature="e#4812#4830#0" expanded="false" />
+            <element signature="e#6518#6519#0" expanded="true" />
+            <element signature="e#6567#6568#0" expanded="true" />
+            <element signature="e#6929#6950#0" expanded="false" />
+            <element signature="e#8167#8186#0" expanded="false" />
           </folding>
         </state>
       </provider>

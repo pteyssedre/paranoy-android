@@ -342,5 +342,10 @@ public class SocketClient implements ISocketListener {
 
     public void setIdHelper(IdentityHelper idHelper) {
         this.idHelper = idHelper;
+        if (this.idHelper != null) {
+            if (this.idHelper.getCurrentUser() != null) {
+                PMLogic.setCurrentUserKeySet(this.idHelper.getIdentityKey());
+            }
+        }
     }
 }

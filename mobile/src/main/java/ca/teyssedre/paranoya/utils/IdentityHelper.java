@@ -40,7 +40,7 @@ public class IdentityHelper {
     private final ParanoyaUserSource userSource;
 
     User currentUser;
-    List<User> Contacts;
+    List<User> contacts;
     KeySet userIdentityKeySet;
 
     public IdentityHelper(Crypto crypto, ParanoyaUserSource userSource) {
@@ -65,11 +65,11 @@ public class IdentityHelper {
         return currentUser;
     }
 
-    public List<User> getMyContacts() {
+    public List<User> getCurrentUserContacts() {
         if (getCurrentUser() != null) {
-            userSource.getContactsList(getCurrentUser().getId());
+            contacts = userSource.getContactsList(getCurrentUser().getId());
         }
-        return null;
+        return contacts;
     }
 
     public KeySet getIdentityKey() {

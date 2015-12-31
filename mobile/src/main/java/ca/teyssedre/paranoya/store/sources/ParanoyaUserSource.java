@@ -221,23 +221,27 @@ public class ParanoyaUserSource extends DBSource {
     /**
      * @param userId {@link Long} unique identifier of the user.
      */
-    public void getContactsList(long userId) {
+    public List<User> getContactsList(long userId) {
+        List<User> result = new ArrayList<>();
         try {
             open();
-            String query = "SELECT * FROM " + USERS_TABLE_NAME + " u INNER JOIN " + RELATION_KEY_TABLE_NAME + " r " +
-                    "ON u." + USER_ID + "=" + "r." + USER_ID + " WHERE u." + USER_TYPE + " !=? AND u." + USER_ID + " !=?";
-            Cursor cursor = database.rawQuery(query, new String[]{String.valueOf(1), String.valueOf(userId)});
+//            String query = "SELECT * FROM " + USERS_TABLE_NAME + " u INNER JOIN " + RELATION_KEY_TABLE_NAME + " r " +
+//                    "ON u." + USER_ID + "=" + "r." + USER_ID + " WHERE u." + USER_TYPE + " !=? AND u." + USER_ID + " !=?";
+//            Cursor cursor = database.rawQuery(query, new String[]{String.valueOf(1), String.valueOf(userId)});
+            Cursor cursor = database.query(USERS_TABLE_NAME, ALL_USER_COLUMNS, USER_RELAY + " =  " + userId, null, null, null, null);
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
-                System.out.println(cursor);
+                result.add(cursorToUser(cursor));
                 cursor.moveToNext();
             }
             cursor.close();
             close();
 
         } catch (Exception ex) {
+            Log.e(TAG, "Exception during getContactsList");
             ex.printStackTrace();
         }
+        return result;
     }
 
     /**
