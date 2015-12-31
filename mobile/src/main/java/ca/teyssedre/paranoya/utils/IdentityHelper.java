@@ -74,8 +74,10 @@ public class IdentityHelper {
     public KeySet getIdentityKey() {
         if (getCurrentUser() != null) {
             List<Long> ids = userSource.getKeysByUserId(getCurrentUser().getId());
-            long keyId = ids.get(0);
-            return crypto.GetStoredKey(keyId);
+            if (ids.size() > 0) {
+                long keyId = ids.get(0);
+                return crypto.GetStoredKey(keyId);
+            }
         }
         return null;
     }
